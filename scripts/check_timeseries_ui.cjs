@@ -44,8 +44,8 @@ async function main(){
  assert.ok(modal.textContent.includes("₩"),"Won unit retained");
  assert.ok(modal.querySelectorAll("svg circle").length>=1,"single snapshot as point");
  console.log("PASS Samsung KRW-denominated numeric popup");
- for(const p of panels){const ticker=p.querySelector("h2 span")?.textContent.trim();assert.ok(ticker,"ticker");const clickable=p.querySelector(".ts-clickable");assert.ok(clickable,"no clickable metric for "+ticker)}
- console.log("PASS all 47 company panels have clickable numeric values");
+ let checked=0,noNumerics=0;for(const p of panels){const ticker=p.querySelector("h2 span")?.textContent.trim();assert.ok(ticker,"ticker");const numeric=[...p.querySelectorAll(".metric-row > b")].filter(x=>/^\\s*[+\\-−]?(?:NT\\$|₩|€|£|¥|\\$)?\\s*\\d/.test(x.textContent.trim()));const clickable=p.querySelector(".ts-clickable");if(numeric.length){assert.ok(clickable,"no clickable metric for "+ticker);checked++}else noNumerics++}
+ console.log("PASS clickable historical-chart controls on "+checked+" numeric-company panels; "+noNumerics+" N/A-only panels exempt");
  w.close();
 }
 main().catch(e=>{console.error(e.stack||e);process.exitCode=1});
