@@ -44,31 +44,27 @@ function marginBreak(ds,kind){
  }
  return '<p class="drill-note">동일 분기의 부문별 '+(kind==="grossmargin"?"매출총이익률":"영업이익률")+'을 검증할 수 있는 공시가 없어 N/D로 표시합니다. 연결 손익을 매출 비중대로 임의 배분하지 않습니다.</p>';
 }
+function normalizePeriod(text){
+ const s=String(text||"").toUpperCase().replace(/FISCAL YEAR|FISCAL/g,"FY").replace(/FY202(\d)/g,"FY2$1");
+ const match=s.match(/\b(FY)?\s*(?:20)?(2[4-9])\s*Q([1-4])\b/);
+ return match?((match[1]?"FY":"CY")+match[2]+"Q"+match[3]):"";
+}
 function drill(ds,kind,period,old){
- if(old){
-  if(!ds)return '<div class="drill-period">기존 스냅샷 · '+esc(period)+'</div><p class="drill-note">해당 기업의 검증된 사업부별 분해 데이터가 아직 없습니다 (N/D).</p>';
-  const normalize=s=>String(s).toUpperCase().replace(/FISCAL|FY20(\d\d)/g,(m,y)=>y?'FY'+y:'FY').replace(/[^A-Z0-9]/g,'');
-  const same=normalize(period)===normalize(ds.p);
-  const latest=(kind==="revenue"||kind==="operating")?segmentBreak(ds,kind):(kind==="grossmargin"||kind==="opmargin")?marginBreak(ds,kind):'<p class="drill-note">사업부별 순이익 자료는 별도 공시 여부 확인이 필요합니다.</p>';
-  if(same)return '<div class="drill-period">기존 재무 지표와 부문 데이터 기준 일치 · '+esc(period)+'</div>'+latest;
-  return '<div class="drill-warning">선택한 재무지표의 기준: '+esc(period)+' / 아래 사업부 자료: '+esc(ds.p)+' — 서로 다른 기간입니다. 기존 금액에 아래 비중을 곱하지 마세요.</div>'+latest;
- }
- if(!ds)return '<p class="drill-note">동일 분기 공시 부문 데이터 아직 검증 전 (N/D). 추정치를 넣지 않았습니다.</p>';
- if(kind==="revenue"||kind==="operating")return segmentBreak(ds,kind);
- if(kind==="grossmargin"||kind==="opmargin")return marginBreak(ds,kind);
- return '<p class="drill-note">연결 순이익률은 법인세·금융손익과 미배부 비용 영향을 받습니다. 부문별 순이익 미공시는 N/D.</p>';
+ if(!ds)return '<p class="drill-note">이 기업의 동일 기간 부문별 실적 수치는 아직 확인되지 않았습니다. 임의 추정 대신 N/D로 표시합니다.</p>';
+ const dsP=normalizePeriod(ds.p),rowP=normalizePeriod(period);
+ const mismatch=dsP&&rowP&&dsP!==rowP;
+ const periodNotice=mismatch?'<div class="drill-warning">선택한 지표는 '+esc(period)+' 기준, 아래 상세 구성은 '+esc(ds.p)+' 기준입니다. 서로 다른 분기의 금액과 비중은 혼합하지 마세요.</div>':'';
+ let body;
+ if(kind==="revenue"||kind==="operating")body=segmentBreak(ds,kind);
+ else if(kind==="grossmargin"||kind==="opmargin")body=marginBreak(ds,kind);
+ else body='<p class="drill-note">연결 순이익률은 법인세·금융손익·공통비용 영향을 받으므로, 사업부별 순이익이 미공시인 경우 임의 배분하지 않습니다.</p>';
+ // No separate segment card. Click the original metric and show its breakdown below.
+ return periodNotice+body;
 }
 function apply(root){
  let done=0;
  for(const panel of root.querySelectorAll(".company-panel")){
   const ticker=panel.querySelector("h2 span")?.textContent.trim().toUpperCase(),ds=D[ticker],extra=window.AI_SEGMENTS_EXTRA?.[ticker];
-  if(extra&&!panel.querySelector(".segment-breakdown-card")){
-   const card=document.createElement("div");card.className="card latest-earnings segment-breakdown-card";
-   const unit=extra.unit==="KRW billion"?"₩":extra.unit==="EUR million"?"€":extra.unit==="NTD million"?"NT$":"$";
-   const specs=[["Revenue",extra.r?unit+fmt(extra.r[0])+(extra.unit==="KRW billion"?"B":"M"):"비중 공시"],...(extra.o?[[extra.oLabel||"Operating income",unit+fmt(extra.o[0])+(extra.unit==="KRW billion"?"B":"M")]]:[]),...((extra.om||extra.o)?[["Operating margin","부문별 보기"]]:[]),...(extra.gm?[["Gross margin","부문별 보기"]]:[])];
-   card.innerHTML='<h3>📊 사업부별 매출·수익성 · '+esc(extra.p)+'</h3><div class="drill-period">공시 기준 구성 · 항목을 눌러 상세 확인</div>'+specs.map(([label,value])=>'<div class="metric-row reported"><div class="mr-left"><div><span>'+esc(label)+'</span><span class="badge b-reported">Reported / Derived</span></div><small>'+esc(extra.p)+'</small></div><b>'+esc(value)+'</b></div>').join("");
-   const heading=panel.querySelector("h2");if(heading)heading.after(card);else panel.prepend(card);
-  }
   for(const card of panel.querySelectorAll(".latest-earnings,.common-block")){
    const old=card.classList.contains("common-block");
    for(const row of [...card.querySelectorAll(".metric-row")]){
