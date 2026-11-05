@@ -229,10 +229,67 @@ main{padding:18px;overflow:auto}h1{font-size:23px;margin:3px 0 5px}.sub{font-siz
 .latest-earnings{border:1px solid #4c927e;background:linear-gradient(180deg,#0d2931,#0a1b2d);margin-top:10px}.latest-earnings h3{color:#79e4bb;font-size:13px}.latest-date{font-weight:500;color:#b5d5d5;font-size:9px}.latest-earnings .metric-row{background:#102c38}.latest-earnings .metric-row b{white-space:normal;text-align:right;font-size:12px}.latest-legacy-note{font-size:9px;line-height:1.55;color:#e3bf7b;border-top:1px solid #31536a;margin-top:10px;padding-top:8px}
 .guidance-beat-summary{padding:10px;margin:10px 0;border:1px solid #28546e;border-radius:9px;background:#0b2133}.guidance-topline{color:#b3d0ed;font-size:11px;font-weight:750;margin-bottom:8px}.guidance-compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}.guidance-compare-grid>div{min-width:0;border:1px solid #244055;background:#112c42;border-radius:6px;padding:6px}.guidance-compare-grid small{display:block;color:#a7b7c8;font-size:8px;margin-bottom:4px}.guidance-compare-grid strong{display:block;font-size:10px;overflow-wrap:anywhere}.guide-up{color:#78e5a8}.guidance-range-result{font-size:10px;color:#a8ebbb;margin:8px 0}.guidance-extra{font-size:10px;line-height:1.55;color:#d1e7f8}.guidance-method{font-size:9px;color:#869cb8;line-height:1.4;margin-top:7px}.guidance-unverified{border-color:#575b6f}.guidance-pending{color:#e9c17a;font-size:10px;line-height:1.5}
 .company-panel>h2 .company-page-link{color:inherit;text-decoration:none;display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:7px;border-bottom:1px dashed #4b87aa;transition:.15s}.company-panel>h2 .company-page-link:hover{color:#6fe4d7;border-bottom-color:#6fe4d7}.company-panel>h2 .company-page-link:hover span{color:#9cdbed}.company-panel>h2 .page-link-icon{color:#64ded2;font-size:13px;font-weight:700}.rightbar .right-section-title:first-child:after{content:" · 기업명 클릭 → 심층분석";color:#62d4ca;font-weight:600}
+
+/* V3.1 — typography/readability update; shared by the map and company detail page */
+body{font-size:14px}
+.brand{font-size:21px}.asof{font-size:12px}
+.leftbar{padding:18px}.leftbar h3{font-size:17px}.stat b{font-size:20px}.stat span{font-size:12px}
+.leftbar .legend div,.leftbar .help{font-size:12px;line-height:1.6}
+main h1{font-size:27px}.sub{font-size:14px;line-height:1.55}
+.ng-node b,.node .ticker{font-size:17px}
+.ng-node span,.node .role,.node .name{font-size:12px}
+.node .headline,.tip,.col-title,.stage-title,.subcat-title{font-size:12px}
+.rightbar{padding:20px}.rightbar h2{font-size:23px;line-height:1.3}.rightbar h2 span{font-size:16px}
+.right-section-title,.eyebrow{font-size:12px}
+.rightbar .card{padding:14px;margin-bottom:13px}.rightbar .card h3{font-size:16px}
+.rightbar .muted,.rightbar .small,.rightbar .placeholder,.rightbar .call{font-size:13px;line-height:1.65}
+.rightbar .business-overview h3{font-size:16px!important}
+.rightbar .business-overview .overview-text{font-size:14px!important;line-height:1.8!important}
+.rightbar .card .metric-row{gap:12px;padding:10px 11px;min-height:44px}
+.rightbar .metric-row span:first-child,.rightbar .metric-row b,.rightbar .latest-earnings .metric-row b{font-size:13px;white-space:normal;overflow-wrap:anywhere}
+.rightbar .metric-row small,.rightbar .badge,.rightbar .rel-badge{font-size:11px;line-height:1.4}
+.rightbar .chip,.rightbar .src,.rightbar .src a,.rightbar .formula-box,.rightbar .assumption-warning{font-size:12px;line-height:1.6}
+.rightbar .common-subtitle,.rightbar .commercial-sub,.rightbar .direction-hint{font-size:12px;line-height:1.5}
+.rightbar .rel2-top b,.rightbar .rel2-mid strong{font-size:13px}
+.rightbar .rel2-top span,.rightbar .rel2-note,.rightbar .rel2-source,.rightbar .commercial-cols h4{font-size:12px;line-height:1.55}
+.rightbar .latest-earnings h3{font-size:16px}.rightbar .latest-date{font-size:12px}
+.rightbar .guidance-topline{font-size:14px}
+.rightbar .guidance-compare-grid small{font-size:11px}
+.rightbar .guidance-compare-grid strong{font-size:12px;overflow-wrap:anywhere}
+.rightbar .guidance-range-result,.rightbar .guidance-extra,.rightbar .guidance-pending{font-size:13px;line-height:1.6}
+.rightbar .guidance-method,.rightbar .latest-legacy-note{font-size:12px;line-height:1.6}
+.rightbar .rel2-row{padding:11px}
+.rightbar .commercial-cols{gap:12px}
+@media(min-width:1401px){.app{grid-template-columns:220px minmax(1240px,1fr) 560px}}
+@media(max-width:1400px){.rightbar{width:min(560px,96vw)}}
+.rightbar .guidance-compare-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:530px){.rightbar .guidance-compare-grid{grid-template-columns:1fr 1fr}}
+/* On the company research page, imported map styles should retain the same readable typography */
+.source-panel .card{padding:18px;margin-bottom:15px}
+.source-panel .card h3{font-size:18px}
+.source-panel .business-overview h3{font-size:18px!important}
+.source-panel .business-overview .overview-text{font-size:16px!important;line-height:1.85!important}
+.source-panel .muted,.source-panel .small,.source-panel .placeholder,.source-panel .call{font-size:15px;line-height:1.7}
+.source-panel .metric-row{padding:12px;gap:14px;min-height:52px}
+.source-panel .metric-row span:first-child,.source-panel .metric-row b,.source-panel .latest-earnings .metric-row b{font-size:15px;white-space:normal;overflow-wrap:anywhere}
+.source-panel .metric-row small,.source-panel .badge{font-size:12px;line-height:1.45}
+.source-panel .chip,.source-panel .src,.source-panel .src a,.source-panel .formula-box,.source-panel .assumption-warning{font-size:14px;line-height:1.65}
+.source-panel .common-subtitle,.source-panel .commercial-sub,.source-panel .direction-hint{font-size:14px}
+.source-panel .rel2-top b,.source-panel .rel2-mid strong{font-size:15px}
+.source-panel .rel2-top span,.source-panel .rel2-note,.source-panel .rel2-source,.source-panel .commercial-cols h4{font-size:13px;line-height:1.55}
+.source-panel .latest-earnings h3{font-size:19px}
+.source-panel .latest-date{font-size:13px}
+.source-panel .guidance-topline{font-size:16px}
+.source-panel .guidance-compare-grid small{font-size:13px}
+.source-panel .guidance-compare-grid strong{font-size:15px}
+.source-panel .guidance-range-result,.source-panel .guidance-extra,.source-panel .guidance-pending{font-size:15px}
+.source-panel .guidance-method,.source-panel .latest-legacy-note{font-size:13px;line-height:1.6}
+.source-panel .right-section-title{font-size:13px}
+.source-panel .rel2-row{padding:13px}
 </style></head>
 <body>
 <input class="state-radio" id="company-0" name="company" type="radio"/><input class="state-radio" id="company-1" name="company" type="radio"/><input class="state-radio" id="company-2" name="company" type="radio"/><input class="state-radio" id="company-3" name="company" type="radio"/><input class="state-radio" id="company-4" name="company" type="radio"/><input class="state-radio" id="company-5" name="company" type="radio"/><input class="state-radio" id="company-6" name="company" type="radio"/><input class="state-radio" id="company-7" name="company" type="radio"/><input checked="" class="state-radio" id="company-8" name="company" type="radio"/><input class="state-radio" id="company-9" name="company" type="radio"/><input class="state-radio" id="company-10" name="company" type="radio"/><input class="state-radio" id="company-11" name="company" type="radio"/><input class="state-radio" id="company-12" name="company" type="radio"/><input class="state-radio" id="company-13" name="company" type="radio"/><input class="state-radio" id="company-14" name="company" type="radio"/><input class="state-radio" id="company-15" name="company" type="radio"/><input class="state-radio" id="company-16" name="company" type="radio"/><input class="state-radio" id="company-17" name="company" type="radio"/><input class="state-radio" id="company-18" name="company" type="radio"/><input class="state-radio" id="company-19" name="company" type="radio"/><input class="state-radio" id="company-20" name="company" type="radio"/><input class="state-radio" id="company-21" name="company" type="radio"/><input class="state-radio" id="company-22" name="company" type="radio"/><input class="state-radio" id="company-23" name="company" type="radio"/><input class="state-radio" id="company-24" name="company" type="radio"/><input class="state-radio" id="company-25" name="company" type="radio"/><input class="state-radio" id="company-26" name="company" type="radio"/><input class="state-radio" id="company-27" name="company" type="radio"/><input class="state-radio" id="company-28" name="company" type="radio"/><input class="state-radio" id="company-29" name="company" type="radio"/><input class="state-radio" id="company-30" name="company" type="radio"/><input class="state-radio" id="company-31" name="company" type="radio"/><input class="state-radio" id="company-32" name="company" type="radio"/><input class="state-radio" id="company-33" name="company" type="radio"/><input class="state-radio" id="company-34" name="company" type="radio"/><input class="state-radio" id="company-35" name="company" type="radio"/><input class="state-radio" id="company-36" name="company" type="radio"/><input class="state-radio" id="company-37" name="company" type="radio"/><input class="state-radio" id="company-38" name="company" type="radio"/><input class="state-radio" id="company-39" name="company" type="radio"/><input class="state-radio" id="company-40" name="company" type="radio"/><input class="state-radio" id="company-41" name="company" type="radio"/><input class="state-radio" id="company-42" name="company" type="radio"/><input class="state-radio" id="company-43" name="company" type="radio"/><input class="state-radio" id="company-44" name="company" type="radio"/><input class="state-radio" id="company-45" name="company" type="radio"/><input class="state-radio" id="company-46" name="company" type="radio"/><input class="state-radio" id="company-47" name="company" type="radio"/><input class="state-radio" id="company-48" name="company" type="radio"/><input class="state-radio" id="company-49" name="company" type="radio"/><input class="state-radio" id="company-50" name="company" type="radio"/><input checked="" class="state-radio" id="edge-0" name="edge" type="radio"/><input class="state-radio" id="edge-1" name="edge" type="radio"/><input class="state-radio" id="edge-2" name="edge" type="radio"/><input class="state-radio" id="edge-3" name="edge" type="radio"/><input class="state-radio" id="edge-4" name="edge" type="radio"/><input class="state-radio" id="edge-5" name="edge" type="radio"/><input class="state-radio" id="edge-6" name="edge" type="radio"/><input class="state-radio" id="edge-7" name="edge" type="radio"/>
-<header><div class="brand">AI <b>Industry Map</b> — V3.0 Company Research Pages</div><div class="asof">2026-11-05 기준 • 24개 실적 • 가이던스 정량비교 6개 / 검증 대기 18개</div></header>
+<header><div class="brand">AI <b>Industry Map</b> — V3.1 Readable Research</div><div class="asof">2026-11-05 기준 • 24개 실적 • 가이던스 정량비교 6개 / 검증 대기 18개</div></header>
 <div class="app">
 <aside class="leftbar">
 <h3>Research coverage</h3>
