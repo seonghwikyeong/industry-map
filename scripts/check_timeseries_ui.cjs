@@ -44,6 +44,15 @@ async function main(){
  assert.ok(modal.textContent.includes("₩"),"Won unit retained");
  assert.ok(modal.querySelectorAll("svg circle").length>=1,"single snapshot as point");
  console.log("PASS Samsung KRW-denominated numeric popup");
+ for(const [ticker,unit,min] of [["TSM","TWD million",3],["ASML","EUR million",3],["SKH","KRW million",2],["SAMSUNG","KRW million",3]]){
+   const series=history.companies[ticker]?.revenue;
+   assert.equal(series?.unit,unit,ticker+" native reporting currency");
+   assert.ok(series.points.length>=min,ticker+" missing verified historical quarters");
+   const dates=series.points.map(p=>p.end);
+   assert.deepEqual(dates,[...dates].sort(),ticker+" historical dates not sorted");
+   for(const p of series.points){assert.ok(p.source.startsWith("https://"),ticker+" missing filing source");assert.ok(p.end<="2026-11-05",ticker+" future quarter")}
+ }
+ console.log("PASS TSM, ASML, SKH and Samsung official-source quarterly histories");
  let checked=0,noNumerics=0;for(const p of panels){const ticker=p.querySelector("h2 span")?.textContent.trim();assert.ok(ticker,"ticker");const numeric=[...p.querySelectorAll(".metric-row > b")].filter(x=>/^\s*[+\-−]?(?:NT\$|₩|€|£|¥|\$)?\s*\d/.test(x.textContent.trim()));const clickable=p.querySelector(".ts-clickable");if(numeric.length){assert.ok(clickable,"no clickable metric for "+ticker);checked++}else noNumerics++}
  console.log("PASS clickable historical-chart controls on "+checked+" numeric-company panels; "+noNumerics+" N/A-only panels exempt");
  w.close();
