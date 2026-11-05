@@ -1,1 +1,363 @@
-{"generated_at":null,"source":"Google News RSS","description":"RSS collection pending first scheduled run","companies":{"MSFT":[],"AMZN":[],"GOOGL":[],"META":[],"ORCL":[],"OPENAI":[],"ANTH":[],"XAI":[],"NVDA":[],"AMD":[],"AVGO":[],"MRVL":[],"MU":[],"SKH":[],"SAMSUNG":[],"TSM":[],"INTC":[],"ASML":[],"AMAT":[],"LRCX":[],"KLAC":[],"ASE":[],"AMKR":[],"ANET":[],"CSCO":[],"COHR":[],"LITE":[],"INFN":[],"DELL":[],"SMCI":[],"HPE":[],"QUANTA":[],"WISTRON":[],"FOXCONN":[],"VRT":[],"ETN":[],"GEV":[],"CARR":[],"TT":[],"PWR":[],"CEG":[],"VST":[],"NEE":[],"WMB":[],"CRWV":[],"IREN":[],"NBIS":[]}}
+{
+  "generated_at": "2026-11-05T05:00:00Z",
+  "source": "Verified links seed; Google News RSS scheduled refresh pending",
+  "description": "Initial verified news with publication dates (without exact times), scheduled updates use Google News RSS",
+  "companies": {
+    "MSFT": [
+      {
+        "id": "msftsatelliteimagesrevealtroublebrewinga",
+        "title": "Satellite images reveal trouble brewing at Microsoft's AI data center partners",
+        "url": "https://www.businessinsider.com/microsoft-ai-buildout-delays-satellite-images-2026-11",
+        "source": "Business Insider",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "공급망",
+        "priority": 2
+      },
+      {
+        "id": "msftdemocratsmidtermsweepfuels750billion",
+        "title": "Democrats' midterm sweep fuels $750 billion Big Tech rally",
+        "url": "https://www.reuters.com/business/retail-consumer/democrats-midterm-sweep-fuels-750-billion-big-tech-rally-2026-11-04/",
+        "source": "Reuters",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "AI·투자",
+        "priority": 2
+      }
+    ],
+    "AMZN": [
+      {
+        "id": "amzndemocratsmidtermsweepfuels750billion",
+        "title": "Democrats' midterm sweep fuels $750 billion Big Tech rally",
+        "url": "https://www.reuters.com/business/retail-consumer/democrats-midterm-sweep-fuels-750-billion-big-tech-rally-2026-11-04/",
+        "source": "Reuters",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "AI·투자",
+        "priority": 2
+      }
+    ],
+    "GOOGL": [
+      {
+        "id": "googldemocratsmidtermsweepfuels750billio",
+        "title": "Democrats' midterm sweep fuels $750 billion Big Tech rally",
+        "url": "https://www.reuters.com/business/retail-consumer/democrats-midterm-sweep-fuels-750-billion-big-tech-rally-2026-11-04/",
+        "source": "Reuters",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "AI·투자",
+        "priority": 2
+      }
+    ],
+    "META": [
+      {
+        "id": "metademocratsmidtermsweepfuels750billion",
+        "title": "Democrats' midterm sweep fuels $750 billion Big Tech rally",
+        "url": "https://www.reuters.com/business/retail-consumer/democrats-midterm-sweep-fuels-750-billion-big-tech-rally-2026-11-04/",
+        "source": "Reuters",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "AI·투자",
+        "priority": 2
+      }
+    ],
+    "ORCL": [],
+    "OPENAI": [],
+    "ANTH": [],
+    "XAI": [],
+    "NVDA": [
+      {
+        "id": "nvdachineseaifirmsorderedmassivenvidiach",
+        "title": "Chinese AI firms ordered massive Nvidia chips but face very limited deliveries",
+        "url": "https://news.sbs.co.kr/amp/news.amp?news_id=N1008831210",
+        "source": "SBS",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "AI·공급망",
+        "priority": 2
+      },
+      {
+        "id": "nvdamicronandotherchipstocksslipaselecti",
+        "title": "Micron and other chip stocks slip as election results strike at the core of data-center optimism",
+        "url": "https://www.marketwatch.com/story/micron-and-other-chip-stocks-slip-as-election-results-strike-at-the-core-of-data-center-optimism-b55d19b3",
+        "source": "MarketWatch",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      },
+      {
+        "id": "nvdasamsungandskhynixriseinpremarketafte",
+        "title": "Samsung and SK hynix rise in premarket after US chip rebound",
+        "url": "https://en.sedaily.com/finance/2026/11/04/samsung-sk-hynix-jump-over-3-percent-in-premarket-on-us",
+        "source": "Seoul Economic Daily",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "반도체",
+        "priority": 2
+      }
+    ],
+    "AMD": [
+      {
+        "id": "amdamdsharesriseasaidrivendatacenterstre",
+        "title": "AMD shares rise as AI-driven data-center strength fuels growth outlook",
+        "url": "https://www.reuters.com/business/amd-shares-jump-ai-driven-data-center-strength-fuels-growth-outlook-2026-11-04/",
+        "source": "Reuters",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "실적",
+        "priority": 2
+      }
+    ],
+    "AVGO": [
+      {
+        "id": "avgomicronandotherchipstocksslipaselecti",
+        "title": "Micron and other chip stocks slip as election results strike at the core of data-center optimism",
+        "url": "https://www.marketwatch.com/story/micron-and-other-chip-stocks-slip-as-election-results-strike-at-the-core-of-data-center-optimism-b55d19b3",
+        "source": "MarketWatch",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      }
+    ],
+    "MRVL": [
+      {
+        "id": "mrvlmicronandotherchipstocksslipaselecti",
+        "title": "Micron and other chip stocks slip as election results strike at the core of data-center optimism",
+        "url": "https://www.marketwatch.com/story/micron-and-other-chip-stocks-slip-as-election-results-strike-at-the-core-of-data-center-optimism-b55d19b3",
+        "source": "MarketWatch",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      },
+      {
+        "id": "mrvlmarvelltobuylumentumin115billionaida",
+        "title": "Marvell to buy Lumentum in $115 billion AI data-center deal",
+        "url": "https://www.investing.com/news/stock-market-news/marvell-to-buy-lumentum-in-115-billion-deal-in-ai-datacenter-bet-4991167",
+        "source": "Reuters via Investing.com",
+        "published_at": "2026-11-02T00:00:00Z",
+        "date_only": true,
+        "category": "M&A",
+        "priority": 2
+      }
+    ],
+    "MU": [
+      {
+        "id": "mumicronandotherchipstocksslipaselection",
+        "title": "Micron and other chip stocks slip as election results strike at the core of data-center optimism",
+        "url": "https://www.marketwatch.com/story/micron-and-other-chip-stocks-slip-as-election-results-strike-at-the-core-of-data-center-optimism-b55d19b3",
+        "source": "MarketWatch",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      },
+      {
+        "id": "musamsungandskhynixriseinpremarketafteru",
+        "title": "Samsung and SK hynix rise in premarket after US chip rebound",
+        "url": "https://en.sedaily.com/finance/2026/11/04/samsung-sk-hynix-jump-over-3-percent-in-premarket-on-us",
+        "source": "Seoul Economic Daily",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "반도체",
+        "priority": 2
+      }
+    ],
+    "SKH": [
+      {
+        "id": "skhsamsungandskhynixriseinpremarketafter",
+        "title": "Samsung and SK hynix rise in premarket after US chip rebound",
+        "url": "https://en.sedaily.com/finance/2026/11/04/samsung-sk-hynix-jump-over-3-percent-in-premarket-on-us",
+        "source": "Seoul Economic Daily",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "반도체",
+        "priority": 2
+      }
+    ],
+    "SAMSUNG": [
+      {
+        "id": "samsungsamsungandskhynixriseinpremarketa",
+        "title": "Samsung and SK hynix rise in premarket after US chip rebound",
+        "url": "https://en.sedaily.com/finance/2026/11/04/samsung-sk-hynix-jump-over-3-percent-in-premarket-on-us",
+        "source": "Seoul Economic Daily",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "반도체",
+        "priority": 2
+      }
+    ],
+    "TSM": [
+      {
+        "id": "tsmchineseaifirmsorderedmassivenvidiachi",
+        "title": "Chinese AI firms ordered massive Nvidia chips but face very limited deliveries",
+        "url": "https://news.sbs.co.kr/amp/news.amp?news_id=N1008831210",
+        "source": "SBS",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "AI·공급망",
+        "priority": 2
+      }
+    ],
+    "INTC": [
+      {
+        "id": "intcmicronandotherchipstocksslipaselecti",
+        "title": "Micron and other chip stocks slip as election results strike at the core of data-center optimism",
+        "url": "https://www.marketwatch.com/story/micron-and-other-chip-stocks-slip-as-election-results-strike-at-the-core-of-data-center-optimism-b55d19b3",
+        "source": "MarketWatch",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      }
+    ],
+    "ASML": [],
+    "AMAT": [],
+    "LRCX": [],
+    "KLAC": [],
+    "ASE": [],
+    "AMKR": [],
+    "ANET": [
+      {
+        "id": "anetaristanetworksreportsthirdquarter202",
+        "title": "Arista Networks reports third quarter 2026 results, revenue grows 58.5%",
+        "url": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000252/ex991q326-earningsrelease.htm",
+        "source": "Arista SEC",
+        "published_at": "2026-11-03T00:00:00Z",
+        "date_only": true,
+        "category": "실적",
+        "priority": 2
+      }
+    ],
+    "CSCO": [],
+    "COHR": [],
+    "LITE": [
+      {
+        "id": "litemarvelltobuylumentumin115billionaida",
+        "title": "Marvell to buy Lumentum in $115 billion AI data-center deal",
+        "url": "https://www.investing.com/news/stock-market-news/marvell-to-buy-lumentum-in-115-billion-deal-in-ai-datacenter-bet-4991167",
+        "source": "Reuters via Investing.com",
+        "published_at": "2026-11-02T00:00:00Z",
+        "date_only": true,
+        "category": "M&A",
+        "priority": 2
+      }
+    ],
+    "INFN": [],
+    "DELL": [],
+    "SMCI": [
+      {
+        "id": "smcisupermicroannouncesfirstquarterfisca",
+        "title": "Supermicro announces first-quarter fiscal 2027 financial results",
+        "url": "https://ir.supermicro.com/financials/quarterly-results/",
+        "source": "Supermicro IR",
+        "published_at": "2026-11-03T00:00:00Z",
+        "date_only": true,
+        "category": "실적",
+        "priority": 2
+      }
+    ],
+    "HPE": [],
+    "QUANTA": [],
+    "WISTRON": [],
+    "FOXCONN": [],
+    "VRT": [],
+    "ETN": [],
+    "GEV": [],
+    "CARR": [],
+    "TT": [],
+    "PWR": [],
+    "CEG": [],
+    "VST": [],
+    "NEE": [],
+    "WMB": [],
+    "CRWV": [
+      {
+        "id": "crwvthebluewaveishammeringdatacenterstoc",
+        "title": "The blue wave is hammering data-center stocks on the prospect of more scrutiny",
+        "url": "https://www.businessinsider.com/midterms-blue-wave-neocloud-stocks-data-centers-coreweave-nebius-iren-2026-11",
+        "source": "Business Insider",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      },
+      {
+        "id": "crwvirenfallscoreweavedropsastexaselecti",
+        "title": "IREN falls, CoreWeave drops as Texas election stokes data-center moratorium concerns",
+        "url": "https://finance.yahoo.com/markets/stocks/articles/iren-falls-5-coreweave-drops-150238705.html",
+        "source": "Yahoo Finance",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      }
+    ],
+    "IREN": [
+      {
+        "id": "irensatelliteimagesrevealtroublebrewinga",
+        "title": "Satellite images reveal trouble brewing at Microsoft's AI data center partners",
+        "url": "https://www.businessinsider.com/microsoft-ai-buildout-delays-satellite-images-2026-11",
+        "source": "Business Insider",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "공급망",
+        "priority": 2
+      },
+      {
+        "id": "irenthebluewaveishammeringdatacenterstoc",
+        "title": "The blue wave is hammering data-center stocks on the prospect of more scrutiny",
+        "url": "https://www.businessinsider.com/midterms-blue-wave-neocloud-stocks-data-centers-coreweave-nebius-iren-2026-11",
+        "source": "Business Insider",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      },
+      {
+        "id": "irenirenfallscoreweavedropsastexaselecti",
+        "title": "IREN falls, CoreWeave drops as Texas election stokes data-center moratorium concerns",
+        "url": "https://finance.yahoo.com/markets/stocks/articles/iren-falls-5-coreweave-drops-150238705.html",
+        "source": "Yahoo Finance",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      }
+    ],
+    "NBIS": [
+      {
+        "id": "nbissatelliteimagesrevealtroublebrewinga",
+        "title": "Satellite images reveal trouble brewing at Microsoft's AI data center partners",
+        "url": "https://www.businessinsider.com/microsoft-ai-buildout-delays-satellite-images-2026-11",
+        "source": "Business Insider",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "공급망",
+        "priority": 2
+      },
+      {
+        "id": "nbisthebluewaveishammeringdatacenterstoc",
+        "title": "The blue wave is hammering data-center stocks on the prospect of more scrutiny",
+        "url": "https://www.businessinsider.com/midterms-blue-wave-neocloud-stocks-data-centers-coreweave-nebius-iren-2026-11",
+        "source": "Business Insider",
+        "published_at": "2026-11-05T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      },
+      {
+        "id": "nbisirenfallscoreweavedropsastexaselecti",
+        "title": "IREN falls, CoreWeave drops as Texas election stokes data-center moratorium concerns",
+        "url": "https://finance.yahoo.com/markets/stocks/articles/iren-falls-5-coreweave-drops-150238705.html",
+        "source": "Yahoo Finance",
+        "published_at": "2026-11-04T00:00:00Z",
+        "date_only": true,
+        "category": "데이터센터",
+        "priority": 2
+      }
+    ]
+  }
+}
