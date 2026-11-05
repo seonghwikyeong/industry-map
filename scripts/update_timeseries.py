@@ -179,8 +179,9 @@ def build(company,cik):
 def main():
   base=json.loads(DEST.read_text(encoding="utf-8")) if DEST.exists() else {"companies":{}}
   comps=base.setdefault("companies",{})
-  ciks=get("https://www.sec.gov/files/company_tickers.json")
-  tick={entry["ticker"].upper():entry["cik_str"] for entry in ciks.values()}
+  # Static, independently sourced CIK map avoids the SEC's company_tickers.json
+  # 403 block on GitHub-hosted runners. Still fetches actual financial facts from SEC.
+  tick=json.loads((ROOT/"scripts"/"sec-cik-map.json").read_text(encoding="utf-8"))["tickers"]
   targets={}
   for ticker in TICKERS:
     for alias in ALIASES.get(ticker,[ticker]):
