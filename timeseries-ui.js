@@ -1,4 +1,4 @@
-/* AI Industry Map V5.5 · extended source-backed company financial time-series charts.
+/* AI Industry Map V5.6 · extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -216,6 +216,37 @@ function metricText(el){
 function metricKey(ticker,title,el){
  const value=norm(title).replace(/\s*\([^)]*\)/g,"");
  const context=el.closest(".drill-body")?"segment":el.closest(".latest-earnings")?"latest":el.closest(".common-block")?"common":"other";
+ /* V5.6: exact reported business-unit series; prevent conflating segment with consolidated results. */
+ if(context==="segment"){
+  const summary=el.closest(".metric-expand")?.querySelector("summary .metric-row .mr-left span")?.textContent||"";
+  const operating=/operating|영업이익|영업 손익/i.test(summary);
+  const segments={
+   AMZN:{"aws":"aws","north america":"northAmerica","international":"international"},
+   GOOGL:{"google cloud":"googleCloud","google services":"googleServices"},
+   META:{"family of apps":"familyOfApps","reality labs":"realityLabs"}
+  };
+  const prefix=segments[ticker]?.[value];
+  if(prefix)return prefix+(operating?"OperatingIncome":"Revenue");
+  if(!operating){
+   const extra={
+    AVGO:{"semiconductor solutions":"semiconductorRevenue","infrastructure software":"infrastructureSoftwareRevenue"},
+    ORCL:{"cloud":"cloudRevenue","cloud infrastructure":"cloudInfrastructureRevenue","cloud applications":"cloudApplicationsRevenue"},
+    ANET:{"product":"productRevenue","service":"serviceRevenue"},
+    AMKR:{"advanced products":"advancedProductsRevenue","mainstream products":"mainstreamProductsRevenue"},
+    VRT:{"amer":"americasRevenue","americas":"americasRevenue","apac":"apacRevenue","emea":"emeaRevenue"}
+   };
+   if(extra[ticker]?.[value])return extra[ticker][value];
+  }
+ }
+ const businessMetrics={
+  AMZN:{"aws":"awsRevenue","aws net sales":"awsRevenue","advertising":"advertisingRevenue","advertising services":"advertisingRevenue","subscription services":"subscriptionRevenue"},
+  GOOGL:{"google cloud":"googleCloudRevenue","google services":"googleServicesRevenue"},
+  META:{"family of apps":"familyOfAppsRevenue","reality labs":"realityLabsRevenue","advertising":"advertisingRevenue"},
+  AVGO:{"semiconductor solutions":"semiconductorRevenue","infrastructure software":"infrastructureSoftwareRevenue"},
+  ORCL:{"cloud":"cloudRevenue","cloud infrastructure":"cloudInfrastructureRevenue","cloud applications":"cloudApplicationsRevenue"},
+  AMKR:{"advanced products":"advancedProductsRevenue","mainstream products":"mainstreamProductsRevenue"}
+ };
+ if(businessMetrics[ticker]?.[value])return businessMetrics[ticker][value];
  if(context==="segment"&&ticker==="MSFT"){
    if(value==="agents and infra")return el.closest(".metric-expand")?.querySelector(".metric-row span")?.textContent.toLowerCase().includes("operating")?"agentsInfraOperatingIncome":"agentsInfraRevenue";
  }
@@ -389,7 +420,30 @@ function render(){
 function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()});const data=viewData(el);if(data?.key&&!data.forecast){requestRemote(data.ticker,data.key).then(()=>{if(active===el&&o.classList.contains("ts-open"))render()})}}
 async function load(force){
  if(loading&&!force)return loading;
- loading=(async()=>{try{const r=await fetch("./timeseries.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const json=await r.json();if(!json.companies||typeof json.companies!=="object")throw Error("Invalid timeseries");DB=json;loaded=true}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
+ loading=(async()=>{try{const r=await fetch("./timeseries.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const json=await r.json();if(!json.companies||typeof json.companies!=="object")throw Error("Invalid timeseries");DB=json;
+  // Supplemental compact sources preserve the original V5.5 dataset.
+  try{
+   const extraRes=await fetch("./timeseries-v56.json?v=56",{cache:"no-store"});
+   if(extraRes.ok){
+    const supplement=await extraRes.json();
+    for(const [ticker,record] of Object.entries(supplement.companies||{})){
+     if(!Array.isArray(record.dates)||!record.metrics)continue;
+     const converted={};
+     for(const [key,values] of Object.entries(record.metrics)){
+      if(!Array.isArray(values)||values.length!==record.dates.length)continue;
+      const points=values.map((value,i)=>{
+       const end=record.dates[i],source=(record.sources||[])[i]||record.source;
+       const period=(record.periods||[])[i]||end.slice(0,4)+" Q"+Math.ceil(Number(end.slice(5,7))/3);
+       return {end,period,value,source,kind:"reported",...(record.rounded?{note:"공식 발표 반올림 금액 (USD 0.1B 단위)"}:{})};
+      }).filter(p=>Number.isFinite(p.value)&&/^20\\d\\d-\\d\\d-\\d\\d$/.test(p.end)&&p.end<=new Date().toISOString().slice(0,10)&&/^https:\\/\\//.test(p.source||""));
+      if(points.length)converted[key]={unit:key==="eps"?"USD/share":/Margin$/.test(key)?"%":"USD million",
+          frequency:"quarterly",basis:record.rounded?"Official IR release (rounded reported values)":"Official IR/SEC quarterly disclosures",points};
+     }
+     DB.companies[ticker]=Object.assign({},DB.companies[ticker]||{},converted);
+    }
+   }
+  }catch(error){console.warn("V5.6 supplementary history unavailable",error)}
+  loaded=true}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
  if(!el?.closest?.(".company-panel"))return false;
