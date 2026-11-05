@@ -215,8 +215,16 @@ function viewData(el){
  const forecast=isForecast(el,title);
  let local=key&&!forecast?DB.companies?.[ticker]?.[key]:null;
  let remote=key&&!forecast?REMOTE[ticker]?.[key]:null;
- let series=remote?.points?.length>local?.points?.length?remote:local;
- if(!series)series=remote||local;
+ // Merge individually dated quarters; latest directly sourced IR values take
+ // precedence over an older SEC-mirror snapshot of the same date.
+ let series=local||remote;
+ if(local?.points?.length&&remote?.points?.length&&local.unit===remote.unit){
+   const joined=new Map(remote.points.map(p=>[p.end,p]));
+   for(const p of local.points)joined.set(p.end,p);
+   series={unit:local.unit,frequency:local.frequency||remote.frequency,
+           basis:remote.basis+" + "+local.basis,
+           points:[...joined.values()].sort((a,b)=>String(a.end).localeCompare(String(b.end)))};
+ }else if(remote?.points?.length>local?.points?.length)series=remote;
  let points=Array.isArray(series?.points)?series.points.filter(p=>typeof p.value==="number"&&Number.isFinite(p.value)&&p.end):[];
  if(series?.unit==="USD million"&&parsed.unit==="%"&&!["yoyGrowth","grossMargin","operatingMargin","netMargin"].includes(key))points=[];
  if(series?.unit==="USD million"&&parsed.unit==="multiple")points=[];
