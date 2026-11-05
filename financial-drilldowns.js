@@ -8,7 +8,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"
 const PRODUCT=window.AI_PRODUCT_TAXONOMY||{};
 function productTree(ticker,group,segmentRevenue){
   const entry=PRODUCT[ticker];
-  const match=entry?.groups?.find(a=>a[0]===group);
+  const match=entry?.groups?.find(a=>a[0]===group)||(ticker==="NVDA"&&group.startsWith("Non-Data Center")?entry.groups.find(a=>a[0].startsWith("Edge Computing")):null);
   if(!match)return "";
   return '<div class="product-tree"><div class="product-tree-title">주요 제품·서비스 (제품별 매출 미공시는 N/D)</div>'+match[1].map(([name,description,amount])=>{
     const known=typeof amount==="number";
@@ -36,12 +36,13 @@ function segmentBreak(ds,kind,ticker){
    const pct=kind==="revenue"&&!noShare&&n>=0?(n/total*100):null;
    const r=ds.r?.[1].find(x=>x[0]===name)?.[1];
    const m=kind==="operating"&&r>0&&(ds.oLabel? !/EBITDA/i.test(ds.oLabel):true)?(n/r*100):null;
-   return '<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+(n<0?'−':'')+fmt(Math.abs(n))+suffix+'</strong>'+(pct!==null?'<em>'+pct.toFixed(1)+'%</em>':'')+'</div>'+(pct!==null?'<div class="drill-bar"><span style="width:'+Math.min(100,pct)+'%"></span></div>':'')+(m!==null?'<div class="drill-math">영업이익률 '+m.toFixed(1)+'%</div>':'')+(kind==='revenue'?productTree(ticker,name,n):'')+'</div>';
+   return '<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+(n<0?'−':'')+fmt(Math.abs(n))+suffix+'</strong>'+(pct!==null?'<em>'+pct.toFixed(1)+'%</em>':'')+'</div>'+(pct!==null?'<div class="drill-bar"><span style="width:'+Math.min(100,pct)+'%"></span></div>':'')+(m!==null?'<div class="drill-math">영업이익률 '+m.toFixed(1)+'%</div>':'')+(kind==='revenue'&&!(ticker==='NVDA'&&name==='Data Center')?productTree(ticker,name,n):'')+'</div>';
  }).join('');
  const sum=parts.reduce((x,a)=>x+a[1],0);
  const discrepancy=total-sum;
  const basis=kind==="revenue"?"매출":(ds.oLabel||"사업부 영업이익");
- return '<div class="drill-period">'+esc(ds.p)+' · '+esc(unit)+' · '+esc(basis)+'</div>'+lines+'<div class="drill-total"><span>표시 기준 합계</span><strong>'+fmt(total)+suffix+'</strong></div>'+(Math.abs(discrepancy)>0.5?'<div class="drill-warning">공시 합계와 잔차 '+fmt(discrepancy)+suffix+'</div>':'')+'<p class="drill-note">'+esc(ds.note||'')+'</p>'+(kind==="revenue"&&ds.pct?pctBreak(ds.pct,ds.pctLabel||"별도 분류별 매출 비중"):"")+(kind==="revenue"&&ds.extraPct?pctBreak(ds.extraPct,ds.extraPctLabel||"추가 비중"):"")+(kind==='revenue'&&PRODUCT[ticker]&&!PRODUCT[ticker].groups.some(g=>parts.some(p=>p[0]===g[0]))?allProductTrees(ticker):'')+'<a class="drill-source" href="'+esc(ds.url)+'" target="_blank" rel="noopener noreferrer">기업 IR / SEC 원문 ↗</a>';
+ const featured=kind==="revenue"&&ticker==="NVDA"?'<div class="drill-period" style="color:#78ead2;font-weight:800">NVIDIA DATA CENTER · GPU 세대와 핵심 AI 시스템</div>'+productTree(ticker,"Data Center",89000)+'<p class="drill-note">아래 부문별 금액은 제품별 매출과 다릅니다. GPU 개별 매출은 공시하지 않으며 Blackwell·Rubin 칩과 NVL72 시스템은 중첩되는 플랫폼입니다.</p>':"";
+ return '<div class="drill-period">'+esc(ds.p)+' · '+esc(unit)+' · '+esc(basis)+'</div>'+featured+lines+'<div class="drill-total"><span>표시 기준 합계</span><strong>'+fmt(total)+suffix+'</strong></div>'+(Math.abs(discrepancy)>0.5?'<div class="drill-warning">공시 합계와 잔차 '+fmt(discrepancy)+suffix+'</div>':'')+'<p class="drill-note">'+esc(ds.note||'')+'</p>'+(kind==="revenue"&&ds.pct?pctBreak(ds.pct,ds.pctLabel||"별도 분류별 매출 비중"):"")+(kind==="revenue"&&ds.extraPct?pctBreak(ds.extraPct,ds.extraPctLabel||"추가 비중"):"")+(kind==='revenue'&&PRODUCT[ticker]&&!PRODUCT[ticker].groups.some(g=>parts.some(p=>p[0]===g[0]))?allProductTrees(ticker):'')+'<a class="drill-source" href="'+esc(ds.url)+'" target="_blank" rel="noopener noreferrer">기업 IR / SEC 원문 ↗</a>';
 }
 function kindOf(s){
  s=(s||'').trim().toLowerCase();
