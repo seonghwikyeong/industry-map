@@ -141,7 +141,7 @@ async function requestRemote(ticker,key){
        REMOTE[ticker][key]={unit:payload.unit==="ratio"?"multiple":payload.unit==="percent"?"%":payload.unit==="usd"?"USD million":"number",
          frequency:payload.basis||"daily",basis:"TGMCharts 제공 "+(payload.label||slug)+" (시장가격 포함, SEC 단독 공시 아님)",
          points:payload.points.filter(x=>Number.isFinite(x.value)&&x.date).map(x=>({end:x.date,
-           value:payload.unit==="usd"?x.value/1e6:x.value,source:"https://tgmcharts.com/stocks/"+encodeURIComponent(ticker),kind:"reported"})).slice(-250)};
+           value:payload.unit==="usd"?x.value/1e6:x.value,source:"https://tgmcharts.com/stocks/"+encodeURIComponent(ticker),kind:"derived",note:"재무제표·시장가격 기반 제공처 계산값"})).slice(-250)};
       }
     }else extractRemote(ticker,payload,group);
   }catch(error){console.warn("Historical financial API unavailable",ticker,group||slug,error)}
