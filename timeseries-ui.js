@@ -239,6 +239,9 @@ function metricKey(ticker,title,el){
   LITE:{"components":"componentsRevenue","systems":"systemsRevenue"},
   COHR:{"datacenter & communications":"datacenterCommunicationsRevenue","industrial":"industrialRevenue"},
   AMAT:{"semiconductor systems":"semiconductorSystemsRevenue","applied global services":"appliedGlobalServicesRevenue"},
+    DELL:{"infrastructure solutions":"infrastructureSolutionsRevenue","client solutions":"clientSolutionsRevenue","ai-optimized servers":"aiOptimizedServersRevenue","traditional servers and networking":"traditionalServersRevenue","storage":"storageRevenue"},
+    CSCO:{"networking":"networkingRevenue","security":"securityRevenue","collaboration":"collaborationRevenue","observability":"observabilityRevenue","services":"serviceRevenue","total product":"productRevenue"},
+    GEV:{"power":"powerRevenue","electrification":"electrificationRevenue","wind":"windRevenue"},
     VRT:{"amer":"americasRevenue","americas":"americasRevenue","apac":"apacRevenue","emea":"emeaRevenue"}
    };
    if(extra[ticker]?.[value])return extra[ticker][value];
@@ -251,6 +254,10 @@ function metricKey(ticker,title,el){
     AMAT:{"semiconductor systems":"semiconductorSystemsRevenue","applied global services":"appliedGlobalServicesRevenue"}
    };
    if(q[ticker]?.[value])return q[ticker][value];
+   if(ticker==="DELL"){
+    const match={"infrastructure solutions":"infrastructureSolutions","client solutions":"clientSolutions"};
+    const prefix=match[value];if(prefix)return prefix+(operating?"OperatingIncome":"Revenue");
+   }
   }
  }
  const businessMetrics={
