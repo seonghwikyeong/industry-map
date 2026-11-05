@@ -167,8 +167,8 @@ async function requestRemote(ticker,key){
         "https://tgmcharts.com/api/v1/statements/"+encodeURIComponent(ticker)+"/"+group+"?period=quarterly&years=8";
   try{
     const response=await fetch(url,{headers:{Accept:"application/json"}});
-    if(!response.ok)throw Error(String(response.status));
-    const payload=await response.json();
+    if(!response.ok&&!group)throw Error(String(response.status));
+    const payload=response.ok?await response.json():{};
     if(slug)storeMetricSeries(ticker,key,payload,slug);
     else {
       extractRemote(ticker,payload,group);
@@ -274,7 +274,7 @@ function viewData(el){
    series={unit:local.unit,frequency:local.frequency||remote.frequency,
            basis:remote.basis+" + "+local.basis,
            points:[...joined.values()].sort((a,b)=>String(a.end).localeCompare(String(b.end)))};
- }else if(remote?.points?.length>local?.points?.length)series=remote;
+ }else if(remote?.points?.length>(local?.points?.length||0)&&(!local?.points?.length||local?.unit===remote?.unit))series=remote;
  let points=Array.isArray(series?.points)?series.points.filter(p=>typeof p.value==="number"&&Number.isFinite(p.value)&&p.end):[];
  if(series?.unit==="USD million"&&parsed.unit==="%"&&!["yoyGrowth","grossMargin","operatingMargin","netMargin"].includes(key))points=[];
  if(series?.unit==="USD million"&&parsed.unit==="multiple")points=[];
