@@ -54,7 +54,7 @@ body{font-size:16px}
 </header>
 <main class="page">
 <div class="hero">
-<div class="kicker">AI VALUE CHAIN · COMPANY RESEARCH</div>
+<div class="kicker">AI VALUE CHAIN · COMPANY RESEARCH · V3.5</div>
 <h1 id="company-title">기업 데이터를 불러오는 중…</h1>
 <p>기존 산업지도 기업별 상세 패널의 모든 정보를 동일한 원본에서 불러옵니다. 최신 실적·가이던스·FA·밸류에이션 등 항목별 기준일은 각각 확인하세요.</p>
 </div>
@@ -128,7 +128,7 @@ body{font-size:16px}
     copy.querySelectorAll('[id]').forEach(el=>{el.id='research-'+el.id});
     original.replaceChildren(copy);
     if(typeof window.initFinanceDrilldowns==='function')window.initFinanceDrilldowns(original);
-    dataState.textContent='index.html 원본 동기화 · '+entries.length+'개 기업';
+    dataState.textContent=(html.includes('V3.5 NVDA Drilldown Fix')?'V3.5 배포 파일 확인':'구버전 index.html이 제공됨')+' · '+entries.length+'개 기업';
     toc.replaceChildren();
     const originalLink=document.createElement('a');
     originalLink.href='#original-analysis';originalLink.textContent='기존 기업분석 전체 보기';toc.append(originalLink);
