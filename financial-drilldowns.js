@@ -38,7 +38,7 @@ function kindOf(s){
 function marginBreak(ds,kind){
  const explicit=kind==="grossmargin"?ds.gm:ds.om;
  if(explicit)return '<div class="drill-period">'+esc(ds.p)+' · 회사 보고 사업부별 '+(kind==="grossmargin"?"매출총이익률":"영업이익률")+'</div>'+explicit.map(([name,p])=>'<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+p+'%</strong></div></div>').join('')+'<p class="drill-note">회사 공시 마진은 반올림되어 있으므로 이익 금액을 역산해서 보고 수치로 사용하지 않습니다.</p><a class="drill-source" href="'+esc(ds.url)+'" target="_blank" rel="noopener noreferrer">공시 원문 ↗</a>';
- if(kind==="opmargin"&&ds.o&&ds.r&&!ds.oLabel){
+ if(kind==="opmargin"&&ds.o&&ds.r&&!/EBITDA/i.test(ds.oLabel||"")){
    const list=ds.o[1].map(([name,op])=>{let rev=ds.r[1].find(x=>x[0]===name)?.[1];return rev>0?'<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+(op/rev*100).toFixed(1)+'%</strong></div><div class="drill-math">'+fmt(op)+' / '+fmt(rev)+'</div></div>':''}).join('');
    return list+'<p class="drill-note">동일 기간에 공시된 부문별 이익을 부문별 매출로 나눈 Derived 수치입니다.</p>';
  }
@@ -57,7 +57,7 @@ function apply(root){
   const ticker=panel.querySelector("h2 span")?.textContent.trim().toUpperCase(),ds=D[ticker],extra=window.AI_SEGMENTS_EXTRA?.[ticker];
   if(extra&&!panel.querySelector(".segment-breakdown-card")){
    const card=document.createElement("div");card.className="card latest-earnings segment-breakdown-card";
-   const unit=extra.unit==="KRW billion"?"₩":"$";
+   const unit=extra.unit==="KRW billion"?"₩":extra.unit==="EUR million"?"€":extra.unit==="NTD million"?"NT$":"$";
    const specs=[["Revenue",extra.r?unit+fmt(extra.r[0])+(extra.unit==="KRW billion"?"B":"M"):"비중 공시"],...(extra.o?[[extra.oLabel||"Operating income",unit+fmt(extra.o[0])+(extra.unit==="KRW billion"?"B":"M")]]:[]),...((extra.om||extra.o)?[["Operating margin","부문별 보기"]]:[]),...(extra.gm?[["Gross margin","부문별 보기"]]:[])];
    card.innerHTML='<h3>📊 사업부별 매출·수익성 · '+esc(extra.p)+'</h3><div class="drill-period">공시 기준 구성 · 항목을 눌러 상세 확인</div>'+specs.map(([label,value])=>'<div class="metric-row reported"><div class="mr-left"><div><span>'+esc(label)+'</span><span class="badge b-reported">Reported / Derived</span></div><small>'+esc(extra.p)+'</small></div><b>'+esc(value)+'</b></div>').join("");
    const heading=panel.querySelector("h2");if(heading)heading.after(card);else panel.prepend(card);
