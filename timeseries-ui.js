@@ -7,7 +7,7 @@
 let DB={generated_at:null,companies:{}},loaded=false,loading=null,active=null;
 const PERIODS=window.AI_EARNINGS_PERIODS||{};
 const money=/^\s*[+\-−]?\s*\$?\s*\(?\d+(?:[,.]\d+)*(?:\.\d+)?\)?\s*(?:[KMBT]|%|x|X)?/;
-const query=".company-panel .metric-row > b,.company-panel .metric-row strong,.company-panel .drill-head strong,.company-panel .drill-total strong,.company-panel .product-amount,.company-panel .rel2-mid strong,.company-panel .guidance-range-result strong,.company-panel .guidance-compare-grid strong,.company-panel .stat b,.company-panel .formula-box b,.company-panel .commercial-cols strong,.company-panel .rel2-top b";
+const query=".company-panel b,.company-panel strong,.company-panel .product-amount,.company-panel .formula-box,.company-panel .metric-row > span,.company-panel .guidance-range-result,.company-panel .rel2-top > span,.company-panel .rel2-mid > span";
 const labels={
 "revenue":"revenue","매출":"revenue","total revenue":"revenue","net sales":"revenue","sales":"revenue",
 "operating income":"operatingIncome","영업이익":"operatingIncome","gaap 영업이익":"operatingIncome",
@@ -186,6 +186,7 @@ function render(){
  if(!d.series||existing.length<2){const note=document.createElement("div");note.className="ts-warning";note.textContent=existing.length===1?"추가 과거 자료를 확보하지 못했습니다. 표시된 값 1개로 과거 추세를 추정할 수 없습니다.":"해당 항목의 신뢰 가능한 과거 시계열이 없습니다.";content.append(note)}
  if(d.forecast){const note=document.createElement("div");note.className="ts-warning";note.textContent="이 값은 가이던스 또는 시나리오 가정입니다. 실현된 분기 실적과 혼합하지 않았습니다.";content.append(note)}
  if(d.parsed?.unit==="multiple"&&d.series?.unit==="USD million"){const note=document.createElement("div");note.className="ts-warning";note.textContent="화면 값은 배수(x)인데 공시 시계열은 금액입니다. 기존 숫자의 단위 오류 가능성이 있어 직접 검증이 필요합니다.";content.append(note)}
+ if(/\s\/\s/.test(active?.textContent||"")){const note=document.createElement("div");note.className="ts-warning";note.textContent="한 셀에 여러 수치가 함께 표시돼 있습니다. 차트는 첫 번째 값을 대상으로 하며, GAAP/Non-GAAP처럼 정의가 다른 수치는 별도로 검증해야 합니다.";content.append(note)}
  if(d.series?.basis){const note=document.createElement("div");note.className="ts-note";note.textContent="회계 기준: "+d.series.basis+". 동일 지표라도 회계기준·사업부 분류 변경 시 비교에 유의하세요.";content.append(note)}
 }
 function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()})}
@@ -196,7 +197,7 @@ async function load(force){
 function eligible(el){
  if(!el?.closest?.(".company-panel"))return false;
  const row=el.closest(".metric-row");if(row&&row.querySelector(".b-assumption")&&!num(el.textContent))return false;
- const raw=el.textContent.trim();if(!money.test(raw))return false;
+ const raw=el.textContent.trim();if(el.closest("h2,h3,h4,.badge,.news-entry,.src,summary .drill-caret"))return false;if(!money.test(raw))return false;
  return Boolean(num(raw));
 }
 function init(root){
