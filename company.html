@@ -79,6 +79,7 @@ body{font-size:16px}
 </div>
 </div>
 </main>
+<script src="./financial-drilldowns.js"></script>
 <script>
 (async function(){
   const params=new URLSearchParams(location.search);
@@ -126,6 +127,7 @@ body{font-size:16px}
     const copy=document.importNode(selected.panel,true);
     copy.querySelectorAll('[id]').forEach(el=>{el.id='research-'+el.id});
     original.replaceChildren(copy);
+    if(typeof window.initFinanceDrilldowns==='function')window.initFinanceDrilldowns(original);
     dataState.textContent='index.html 원본 동기화 · '+entries.length+'개 기업';
     toc.replaceChildren();
     const originalLink=document.createElement('a');
