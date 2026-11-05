@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-11-05",
-  "description": "Only confirmed historical quarterly points; excludes forecasts and period-incompatible segment definitions. SEC XBRL collection adds GAAP metrics.",
+  "description": "Quarterly historical from Microsoft 2026 recast IR, NVIDIA fiscal results, AMD SEC/IR; SEC US-GAAP automatic ingestion adds more companies. No interpolation; missing quarters omitted.",
   "companies": {
     "MSFT": {
       "azureRevenue": {
@@ -762,6 +762,431 @@
             "value": 45915,
             "period": "FY27 Q1",
             "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      }
+    },
+    "NVDA": {
+      "revenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP consolidated",
+        "points": [
+          {
+            "end": "2025-07-27",
+            "period": "FY26 Q2",
+            "value": 46743,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-10-26",
+            "period": "FY26 Q3",
+            "value": 57006,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-01-25",
+            "period": "FY26 Q4",
+            "value": 68127,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-04-26",
+            "period": "FY27 Q1",
+            "value": 81615,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-07-26",
+            "period": "FY27 Q2",
+            "value": 96221,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "operatingIncome": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP operating income",
+        "points": [
+          {
+            "end": "2025-07-27",
+            "period": "FY26 Q2",
+            "value": 28440,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-10-26",
+            "period": "FY26 Q3",
+            "value": 36010,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-01-25",
+            "period": "FY26 Q4",
+            "value": 44299,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-04-26",
+            "period": "FY27 Q1",
+            "value": 53536,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-07-26",
+            "period": "FY27 Q2",
+            "value": 63734,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "netIncome": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP net income",
+        "points": [
+          {
+            "end": "2025-07-27",
+            "period": "FY26 Q2",
+            "value": 26422,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-10-26",
+            "period": "FY26 Q3",
+            "value": 31910,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-01-25",
+            "period": "FY26 Q4",
+            "value": 42960,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-04-26",
+            "period": "FY27 Q1",
+            "value": 58321,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-07-26",
+            "period": "FY27 Q2",
+            "value": 59688,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "eps": {
+        "unit": "USD/share",
+        "frequency": "quarterly",
+        "basis": "GAAP diluted EPS",
+        "points": [
+          {
+            "end": "2025-07-27",
+            "period": "FY26 Q2",
+            "value": 1.08,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-10-26",
+            "period": "FY26 Q3",
+            "value": 1.3,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-01-25",
+            "period": "FY26 Q4",
+            "value": 1.76,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-04-26",
+            "period": "FY27 Q1",
+            "value": 2.39,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-07-26",
+            "period": "FY27 Q2",
+            "value": 2.46,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "grossMargin": {
+        "unit": "%",
+        "frequency": "quarterly",
+        "basis": "GAAP gross margin",
+        "points": [
+          {
+            "end": "2025-07-27",
+            "period": "FY26 Q2",
+            "value": 72.4,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-10-26",
+            "period": "FY26 Q3",
+            "value": 73.4,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-01-25",
+            "period": "FY26 Q4",
+            "value": 75,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-04-26",
+            "period": "FY27 Q1",
+            "value": 74.9,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-07-26",
+            "period": "FY27 Q2",
+            "value": 75,
+            "source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "dataCenterRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "NVIDIA Data Center revenue by market platform. FY27 Q1 classification changed; Q4 FY26 figure rounded to $62.3B.",
+        "points": [
+          {
+            "end": "2025-07-27",
+            "period": "FY26 Q2",
+            "value": 41096,
+            "source": "https://investor.nvidia.com/files/doc_financials/2027/NVDA-2027-Q2-10Q-Final-including-exhibits.pdf",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-10-26",
+            "period": "FY26 Q3",
+            "value": 51215,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-01-25",
+            "period": "FY26 Q4",
+            "value": 62300,
+            "source": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026/",
+            "kind": "reported",
+            "note": "회사 보도자료 반올림 공시 $62.3B. 다른 분기와 달리 정확 금액이 아닌 근삿값."
+          },
+          {
+            "end": "2026-04-26",
+            "period": "FY27 Q1",
+            "value": 75246,
+            "source": "https://investor.nvidia.com/files/doc_financials/2027/NVDA-2027-Q2-10Q-Final-including-exhibits.pdf",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-07-26",
+            "period": "FY27 Q2",
+            "value": 89023,
+            "source": "https://investor.nvidia.com/files/doc_financials/2027/NVDA-2027-Q2-10Q-Final-including-exhibits.pdf",
+            "kind": "reported"
+          }
+        ]
+      }
+    },
+    "AMD": {
+      "revenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP consolidated quarterly",
+        "points": [
+          {
+            "end": "2026-03-28",
+            "period": "2026 Q1",
+            "value": 10253,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-27",
+            "period": "2026 Q2",
+            "value": 11536,
+            "source": "https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-26",
+            "period": "2026 Q3",
+            "value": 13377,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "grossProfit": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP gross profit",
+        "points": [
+          {
+            "end": "2026-03-28",
+            "period": "2026 Q1",
+            "value": 5416,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-27",
+            "period": "2026 Q2",
+            "value": 6203,
+            "source": "https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-26",
+            "period": "2026 Q3",
+            "value": 7210,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "operatingIncome": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP operating income",
+        "points": [
+          {
+            "end": "2026-03-28",
+            "period": "2026 Q1",
+            "value": 1476,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-27",
+            "period": "2026 Q2",
+            "value": 1990,
+            "source": "https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-26",
+            "period": "2026 Q3",
+            "value": 2832,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "netIncome": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP net income",
+        "points": [
+          {
+            "end": "2026-03-28",
+            "period": "2026 Q1",
+            "value": 1383,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-27",
+            "period": "2026 Q2",
+            "value": 2297,
+            "source": "https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-26",
+            "period": "2026 Q3",
+            "value": 2428,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "eps": {
+        "unit": "USD/share",
+        "frequency": "quarterly",
+        "basis": "GAAP diluted EPS",
+        "points": [
+          {
+            "end": "2026-03-28",
+            "period": "2026 Q1",
+            "value": 0.84,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-27",
+            "period": "2026 Q2",
+            "value": 1.38,
+            "source": "https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-26",
+            "period": "2026 Q3",
+            "value": 1.46,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          }
+        ]
+      },
+      "dataCenterRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Reported AMD Data Center net revenue",
+        "points": [
+          {
+            "end": "2026-03-28",
+            "period": "2026 Q1",
+            "value": 5775,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-27",
+            "period": "2026 Q2",
+            "value": 6718,
+            "source": "https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-26",
+            "period": "2026 Q3",
+            "value": 8546,
+            "source": "https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/",
             "kind": "reported"
           }
         ]
