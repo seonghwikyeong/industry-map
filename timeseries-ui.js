@@ -322,7 +322,7 @@ function svgChart(points,unit){
 }
 function exportCsv(){if(!active)return;const d=viewData(active);if(!d)return;const unit=d.series?.unit||unitFor(d.key,d.parsed);const lines=[["period","date","value","unit","kind","source"],...d.points.map(p=>[p.period||"",p.end,p.value,unit,p.kind||"",p.source||""])];const csv=lines.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(",")).join("\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(d.ticker+"-"+(d.key||"metric")+"-timeseries.csv").replace(/[^a-z0-9._-]/gi,"_");a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
 function render(){
- if(!active||!document.contains(active))return;
+ if(!active||!active.isConnected)return;
  const d=viewData(active),o=overlay();if(!d)return;
  const existing=d.points.filter(p=>Number.isFinite(p.value)).sort((a,b)=>String(a.end).localeCompare(String(b.end)));
  const unit=d.series?.unit||unitFor(d.key,d.parsed);
