@@ -49,3 +49,5 @@ async function main(){
  w.close();
 }
 main().catch(e=>{console.error(e.stack||e);process.exitCode=1});
+
+// First complete regression test run for V5.3 financial time-series panels.
