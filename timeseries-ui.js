@@ -44,7 +44,7 @@ const RATIO_SLUGS={
  "per":"pe-ratio","p/e":"pe-ratio","p/e ratio":"pe-ratio","pe ratio":"pe-ratio",
  "ps":"ps-ratio","p/s":"ps-ratio","p/b":"pb-ratio","p/ocf":"pocf-ratio","p/fcf":"pfcf-ratio",
  "ev/ebitda":"ev-ebitda","ev/ebit":"ev-ebit","ev/sales":"ev-sales","ev/revenue":"ev-sales",
- "ev/fcf":"ev-fcf","dividend yield":"dividend-yield","roe":"roic","roic":"roic"
+ "ev/fcf":"ev-fcf","dividend yield":"dividend-yield","roic":"roic"
 };
 const INCOME_KEYS=["revenue","grossProfit","operatingIncome","netIncome","eps","grossMargin","operatingMargin","netMargin","yoyGrowth"];
 const CASH_KEYS=["operatingCashFlow","capex","freeCashFlow"];
@@ -299,6 +299,7 @@ function render(){
  const unit=d.series?.unit||unitFor(d.key,d.parsed);
  o.querySelector("#ts-title").textContent=d.ticker+" · "+d.title;
  o.querySelector("#ts-subtitle").textContent=(d.series?.basis||"화면 표시값")+(d.series?.frequency?" · "+d.series.frequency:"")+" · "+existing.length+"개 데이터 포인트";
+ if(d.key&&remoteGroup(d.key)&&!REMOTE[d.ticker]?.[d.key]&&existing.length<5){o.querySelector("#ts-subtitle").textContent+=" · 추가 공시 이력 조회 중 또는 미제공";}
  const content=o.querySelector("#ts-content");content.replaceChildren();
  const chartBox=document.createElement("div");chartBox.className="ts-chart-box";chartBox.appendChild(svgChart(existing,unit));content.appendChild(chartBox);
  const legend=document.createElement("div");legend.className="ts-legend";legend.textContent="단위: "+unit+" · 점에 마우스를 올리면 값 확인 · 공백 분기는 연결하지 않음";content.appendChild(legend);
