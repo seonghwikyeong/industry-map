@@ -56,6 +56,8 @@ function metricKey(ticker,title,el){
  if(context==="segment"&&ticker==="MSFT"){
    if(value==="agents and infra")return el.closest(".metric-expand")?.querySelector(".metric-row span")?.textContent.toLowerCase().includes("operating")?"agentsInfraOperatingIncome":"agentsInfraRevenue";
  }
+ if(ticker==="NVDA"&&(/data center|데이터센터/i.test(value))&&el.closest(".drill-body,.latest-earnings"))return "dataCenterRevenue";
+ if(ticker==="AMD"&&(/data center|데이터센터/i.test(value))&&el.closest(".drill-body,.latest-earnings"))return "dataCenterRevenue";
  if(labels[value])return labels[value];
  if(ticker==="MSFT"&&/\bazure\b/i.test(value))return "azureRevenue";
  if(/영업.?현금흐름/.test(value))return "operatingCashFlow";
@@ -96,6 +98,7 @@ function viewData(el){
  let series=key&&!forecast?DB.companies?.[ticker]?.[key]:null;
  let points=Array.isArray(series?.points)?series.points.filter(p=>typeof p.value==="number"&&Number.isFinite(p.value)&&p.end):[];
  if(series?.unit==="USD million"&&parsed.unit==="%"&&!["yoyGrowth","grossMargin","operatingMargin","netMargin"].includes(key))points=[];
+ if(series?.unit==="USD million"&&parsed.unit==="multiple")points=[];
  if(key==="eps"&&parsed.unit==="USD million")points=[];
  if(points.length===0)points=pointFallback(el,ticker,title,key,parsed);
  return {ticker,title,key,parsed,points,series,forecast,fallback:!series||!Array.isArray(series.points)||!series.points.length};
@@ -182,12 +185,13 @@ function render(){
  existing.slice().reverse().forEach(p=>{let tr=document.createElement("tr");const cols=[p.period||p.end,fvalue(p.value,unit),p.kind==="derived"?"Derived":p.kind==="guidance"?"Guidance":p.kind==="snapshot"?"화면 스냅샷":"Reported"];cols.forEach(txt=>{let td=document.createElement("td");td.textContent=txt;tr.appendChild(td)});const src=document.createElement("td");if(p.source&&/^https:\/\//.test(p.source)){let a=document.createElement("a");a.href=p.source;a.target="_blank";a.rel="noopener noreferrer";a.textContent="원문 ↗";src.className="ts-source";src.appendChild(a)}else src.textContent="미확인";tr.append(src);body.append(tr)});table.append(body);content.appendChild(table);
  if(!d.series||existing.length<2){const note=document.createElement("div");note.className="ts-warning";note.textContent=existing.length===1?"추가 과거 자료를 확보하지 못했습니다. 표시된 값 1개로 과거 추세를 추정할 수 없습니다.":"해당 항목의 신뢰 가능한 과거 시계열이 없습니다.";content.append(note)}
  if(d.forecast){const note=document.createElement("div");note.className="ts-warning";note.textContent="이 값은 가이던스 또는 시나리오 가정입니다. 실현된 분기 실적과 혼합하지 않았습니다.";content.append(note)}
+ if(d.parsed?.unit==="multiple"&&d.series?.unit==="USD million"){const note=document.createElement("div");note.className="ts-warning";note.textContent="화면 값은 배수(x)인데 공시 시계열은 금액입니다. 기존 숫자의 단위 오류 가능성이 있어 직접 검증이 필요합니다.";content.append(note)}
  if(d.series?.basis){const note=document.createElement("div");note.className="ts-note";note.textContent="회계 기준: "+d.series.basis+". 동일 지표라도 회계기준·사업부 분류 변경 시 비교에 유의하세요.";content.append(note)}
 }
 function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()})}
 async function load(force){
  if(loading&&!force)return loading;
- loading=(async()=>{try{const r=await fetch("./timeseries.json"+(force?"?v="+Date.now():""),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const json=await r.json();if(!json.companies||typeof json.companies!=="object")throw Error("Invalid timeseries");DB=json;loaded=true}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
+ loading=(async()=>{try{const r=await fetch("./timeseries.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const json=await r.json();if(!json.companies||typeof json.companies!=="object")throw Error("Invalid timeseries");DB=json;loaded=true}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
  if(!el?.closest?.(".company-panel"))return false;
