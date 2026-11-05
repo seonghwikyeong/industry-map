@@ -1,4 +1,4 @@
-/* AI Industry Map V5.0 · source-backed company financial time-series charts.
+/* AI Industry Map V5.5 · extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -29,6 +29,10 @@ const labels={
 "search and advertising":"searchAdvertisingRevenue",
 "xbox":"xboxRevenue","windows oem and devices":"windowsDevicesRevenue",
 "industry solutions":"industrySolutionsRevenue",
+"research and development":"researchAndDevelopment","r&d":"researchAndDevelopment","연구개발":"researchAndDevelopment",
+"stock based compensation":"stockBasedCompensation","stock-based compensation":"stockBasedCompensation","주식보상":"stockBasedCompensation",
+"share repurchases":"shareRepurchases","buybacks":"shareRepurchases","자사주 매입":"shareRepurchases",
+"ebitda":"ebitdaTtm","roic":"ratio:roic",
 "frontier and support services":"frontierSupportRevenue",
 "agents and infra":"agentsInfraRevenue",
 "devices and consumer":"devicesConsumerRevenue"
@@ -46,6 +50,15 @@ const RATIO_SLUGS={
  "ev/ebitda":"ev-ebitda","ev/ebit":"ev-ebit","ev/sales":"ev-sales","ev/revenue":"ev-sales",
  "ev/fcf":"ev-fcf","dividend yield":"dividend-yield","roic":"roic"
 };
+/* Only slugs documented by the public series API; these are not fabricated history. */
+const SERIES_SLUGS={
+ revenue:"revenue-quarterly",netIncome:"net-income-quarterly",
+ grossMargin:"gross-margin-quarterly",operatingMargin:"operating-margin-quarterly",netMargin:"net-margin-quarterly",
+ researchAndDevelopment:"r-and-d",stockBasedCompensation:"stock-based-comp",shareRepurchases:"buybacks",
+ ebitdaTtm:"ebitda-ttm"
+};
+const CASH_SERIES={capex:"capex"};
+const SERIES_ONLY=new Set(["researchAndDevelopment","stockBasedCompensation","shareRepurchases","ebitdaTtm"]);
 const INCOME_KEYS=["revenue","grossProfit","operatingIncome","netIncome","eps","grossMargin","operatingMargin","netMargin","yoyGrowth"];
 const CASH_KEYS=["operatingCashFlow","capex","freeCashFlow"];
 const BAL_KEYS=["assets","liabilities","cash"];
@@ -123,8 +136,29 @@ function extractRemote(ticker,json,group){
   if(growth.length)REMOTE[ticker].yoyGrowth={unit:"%",frequency:"quarterly",basis:"TGMCharts SEC 분기 매출 YoY 계산",points:growth};
  }
 }
+function storeMetricSeries(ticker,key,payload,slug){
+ if(!Array.isArray(payload?.points)||!payload.points.length)return false;
+ const points=payload.points.filter(p=>p&&/^20\d\d-\d\d-\d\d$/.test(p.date)&&
+   p.date<=new Date().toISOString().slice(0,10)&&Number.isFinite(p.value)).map(p=>({
+   end:p.date,value:(payload.unit==="usd"?p.value/1e6:p.value),
+   source:payload.source==="sec-edgar-companyfacts"?
+     "https://www.sec.gov/edgar/search/":"https://tgmcharts.com/stocks/"+encodeURIComponent(ticker),
+   kind:payload.source==="sec-edgar-companyfacts"?"reported":"derived",
+   note:payload.methodology||"TGMCharts 과거 수치"
+ })).slice(-200);
+ if(!points.length)return false;
+ if(!REMOTE[ticker])REMOTE[ticker]={};
+ REMOTE[ticker][key]={
+  unit:payload.unit==="usd"?"USD million":payload.unit==="usdPerShare"?"USD/share":
+       payload.unit==="percent"?"%":payload.unit==="ratio"?"multiple":"number",
+  frequency:payload.basis||"historical",
+  basis:"TGMCharts "+(payload.source==="sec-edgar-companyfacts"?"SEC EDGAR XBRL":"계산 시계열")+" · "+(payload.label||slug),
+  points
+ };
+ return true;
+}
 async function requestRemote(ticker,key){
- const group=remoteGroup(key),slug=key.startsWith("ratio:")?key.slice(6):null;
+ const group=remoteGroup(key),slug=key.startsWith("ratio:")?key.slice(6):SERIES_ONLY.has(key)?SERIES_SLUGS[key]:null;
  if(!group&&!slug)return;
  const identifier=ticker+"|"+(slug||group);
  if(remoteCalls.has(identifier))return remoteCalls.get(identifier);
@@ -135,15 +169,18 @@ async function requestRemote(ticker,key){
     const response=await fetch(url,{headers:{Accept:"application/json"}});
     if(!response.ok)throw Error(String(response.status));
     const payload=await response.json();
-    if(slug){
-      if(Array.isArray(payload.points)&&payload.points.length){
-       if(!REMOTE[ticker])REMOTE[ticker]={};
-       REMOTE[ticker][key]={unit:payload.unit==="ratio"?"multiple":payload.unit==="percent"?"%":payload.unit==="usd"?"USD million":"number",
-         frequency:payload.basis||"daily",basis:"TGMCharts 제공 "+(payload.label||slug)+" (시장가격 포함, SEC 단독 공시 아님)",
-         points:payload.points.filter(x=>Number.isFinite(x.value)&&x.date).map(x=>({end:x.date,
-           value:payload.unit==="usd"?x.value/1e6:x.value,source:"https://tgmcharts.com/stocks/"+encodeURIComponent(ticker),kind:"derived",note:"재무제표·시장가격 기반 제공처 계산값"})).slice(-250)};
+    if(slug)storeMetricSeries(ticker,key,payload,slug);
+    else {
+      extractRemote(ticker,payload,group);
+      // Some covered SEC issuers have no normalized statement yet.
+      // Use the documented point-level series endpoint for that exact metric.
+      if(!REMOTE[ticker]?.[key]?.points?.length&&SERIES_SLUGS[key]){
+        const secondary=SERIES_SLUGS[key];
+        const fallbackResponse=await fetch("https://tgmcharts.com/api/v1/series/"+encodeURIComponent(ticker)+"/"+secondary+"?years=10",
+          {headers:{Accept:"application/json"}});
+        if(fallbackResponse.ok)storeMetricSeries(ticker,key,await fallbackResponse.json(),secondary);
       }
-    }else extractRemote(ticker,payload,group);
+    }
   }catch(error){console.warn("Historical financial API unavailable",ticker,group||slug,error)}
  })();
  remoteCalls.set(identifier,promise);
@@ -185,9 +222,13 @@ function metricKey(ticker,title,el){
  if(ticker==="NVDA"&&(/data center|데이터센터/i.test(value))&&el.closest(".drill-body,.latest-earnings"))return "dataCenterRevenue";
  if(ticker==="AMD"&&(/data center|데이터센터/i.test(value))&&el.closest(".drill-body,.latest-earnings"))return "dataCenterRevenue";
  if(RATIO_SLUGS[value])return "ratio:"+RATIO_SLUGS[value];
+ if(SERIES_ONLY.has(labels[value]))return labels[value];
  if(labels[value])return labels[value];
  if(ticker==="MSFT"&&/\bazure\b/i.test(value))return "azureRevenue";
  if(/영업.?현금흐름/.test(value))return "operatingCashFlow";
+ if(/연구.?개발|\br&d\b/.test(value))return "researchAndDevelopment";
+ if(/주식.?보상|stock.based compensation/.test(value))return "stockBasedCompensation";
+ if(/자사주.?매입|buyback/.test(value))return "shareRepurchases";
  if(/총.?매출|연결 매출/.test(value))return "revenue";
  if(/영업이익률/.test(value))return "operatingMargin";
  if(/영업이익/.test(value))return "operatingIncome";
