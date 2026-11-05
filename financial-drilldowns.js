@@ -1,66 +1,83 @@
-/* AI Industry Map · Financial drilldowns · v3.2 */
+
 (function(){
 "use strict";
-const D={"MSFT":{"p":"FY27 Q1","url":"https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast","r":[92279,[["Agents and Infra",76795],["Devices and Consumer",15484]]],"o":[45915,[["Agents and Infra",40558],["Devices and Consumer",5357]]],"note":"FY27 사업부 개편 기준. Azure는 Agents and Infra에 포함되므로 중복 합산하지 않습니다."},"AMZN":{"p":"2026 Q3","url":"https://ir.aboutamazon.com/news-release/news-release-details/2026/Amazon-com-Announces-Third-Quarter-Results/","r":[201944,[["North America",112852],["International",43108],["AWS",45984]]],"o":[28076,[["North America",8723],["International",1580],["AWS",17773]]],"note":"금액 단위 USD million. 연결 실적과 합계가 일치합니다."},"GOOGL":{"p":"2026 Q3","url":"https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm","r":[127577,[["Google Services",96302],["Google Cloud",30709],["Other Bets",372],["Hedging adjustment",194]]],"o":[40576,[["Google Services",39157],["Google Cloud",11121],["Other Bets",-2047],["Alphabet-level activities",-7655]]],"note":"Google Services에는 Search·YouTube·구독 포함. 연결 영업이익에 본사 활동 비용 반영."},"META":{"p":"2026 Q3","url":"https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/","r":[64601,[["Family of Apps",64158],["Reality Labs",443]]],"o":[12988,[["Family of Apps",17117],["Reality Labs",-4129]]],"note":"FoA에는 광고 매출 $63,061M 포함. Q3 법적 합의 비용 $9.89B가 영업비용에 반영됨."},"AMD":{"p":"2026 Q3","url":"https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/","r":[13377,[["Data Center",8546],["Client",2949],["Gaming",773],["Embedded",1109]]],"o":[2832,[["Data Center",2882],["Client and Gaming",573],["Embedded",453],["All other",-1076]]],"note":"Client+Gaming은 하나의 보고 부문. Embedded 매출 $1,109M은 공시 매출 총계에서 나머지 부문을 차감해 산출한 Derived 값입니다."},"INTC":{"p":"2026 Q3","url":"https://www.intc.com/news-events/press-releases/detail/1786/intel-reports-third-quarter-2026-financial-results","r":[16513,[["CCPG",8097],["DCAI",7318],["Intel Foundry",6697],["All Other",692],["Intersegment eliminations",-6291]],true],"o":[2522,[["CCPG",2285],["DCAI",3039],["Intel Foundry",-1853],["All Other",179],["Corporate unallocated",-1058],["Intersegment eliminations",-70]]],"note":"Intel Foundry는 내부거래를 포함합니다. 부문 매출을 연결매출로 나눈 비중은 이중계산이므로 표시하지 않습니다."}};
-const fmt=n=>new Intl.NumberFormat("en-US",{maximumFractionDigits:0}).format(n);
+const D=Object.assign({"MSFT":{"p":"FY27 Q1","url":"https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast","r":[92279,[["Agents and Infra",76795],["Devices and Consumer",15484]]],"o":[45915,[["Agents and Infra",40558],["Devices and Consumer",5357]]],"note":"FY27 사업부 개편 기준. Azure는 Agents and Infra에 포함되므로 중복 합산하지 않습니다."},"AMZN":{"p":"2026 Q3","url":"https://ir.aboutamazon.com/news-release/news-release-details/2026/Amazon-com-Announces-Third-Quarter-Results/","r":[201944,[["North America",112852],["International",43108],["AWS",45984]]],"o":[28076,[["North America",8723],["International",1580],["AWS",17773]]],"note":"금액 단위 USD million. 연결 실적과 합계가 일치합니다."},"GOOGL":{"p":"2026 Q3","url":"https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm","r":[127577,[["Google Services",96302],["Google Cloud",30709],["Other Bets",372],["Hedging adjustment",194]]],"o":[40576,[["Google Services",39157],["Google Cloud",11121],["Other Bets",-2047],["Alphabet-level activities",-7655]]],"note":"Google Services에는 Search·YouTube·구독 포함. 연결 영업이익에 본사 활동 비용 반영."},"META":{"p":"2026 Q3","url":"https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/","r":[64601,[["Family of Apps",64158],["Reality Labs",443]]],"o":[12988,[["Family of Apps",17117],["Reality Labs",-4129]]],"note":"FoA에는 광고 매출 $63,061M 포함. Q3 법적 합의 비용 $9.89B가 영업비용에 반영됨."},"AMD":{"p":"2026 Q3","url":"https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/","r":[13377,[["Data Center",8546],["Client",2949],["Gaming",773],["Embedded",1109]]],"o":[2832,[["Data Center",2882],["Client and Gaming",573],["Embedded",453],["All other",-1076]]],"note":"Client+Gaming은 하나의 보고 부문. Embedded 매출 $1,109M은 공시 매출 총계에서 나머지 부문을 차감해 산출한 Derived 값입니다."},"INTC":{"p":"2026 Q3","url":"https://www.intc.com/news-events/press-releases/detail/1786/intel-reports-third-quarter-2026-financial-results","r":[16513,[["CCPG",8097],["DCAI",7318],["Intel Foundry",6697],["All Other",692],["Intersegment eliminations",-6291]],true],"o":[2522,[["CCPG",2285],["DCAI",3039],["Intel Foundry",-1853],["All Other",179],["Corporate unallocated",-1058],["Intersegment eliminations",-70]]],"note":"Intel Foundry는 내부거래를 포함합니다. 부문 매출을 연결매출로 나눈 비중은 이중계산이므로 표시하지 않습니다."}},window.AI_SEGMENTS_EXTRA||{});
+const fmt=n=>new Intl.NumberFormat("en-US",{maximumFractionDigits:2}).format(n);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function rowBlock(dataset,kind){
- const [total,parts,noShare]=dataset[kind==="revenue"?"r":"o"];
- let rows=parts.map(([label,amount])=>{
- const pct=kind==="revenue"&&!noShare&&amount>=0?amount/total*100:null;
- const revenue=dataset.r[1].find(x=>x[0]===label);
- const margin=kind==="operating"&&revenue&&revenue[1]>0?(amount/revenue[1]*100).toFixed(1):null;
- return '<div class="drill-entry"><div class="drill-head"><span>'+esc(label)+'</span><strong>'+(amount<0?"−":"")+fmt(Math.abs(amount))+'M</strong>'+(pct!==null?'<em>'+pct.toFixed(1)+'%</em>':'')+'</div>'+(pct!==null?'<div class="drill-bar"><span style="width:'+Math.min(100,pct).toFixed(2)+'%"></span></div>':'')+(margin!==null?'<div class="drill-math">부문 영업이익률 '+margin+'%</div>':'')+'</div>'
- }).join('');
- const diff=total-parts.reduce((a,x)=>a+x[1],0);
- return '<div class="drill-period">'+esc(dataset.p)+' · USD million · GAAP</div>'+rows+'<div class="drill-total"><span>연결 합계</span><strong>'+fmt(total)+'M</strong></div>'+(Math.abs(diff)>.5?'<div class="drill-warning">표시된 부문과 연결 총계 차이 '+fmt(diff)+'M — 조정/미공개 포함</div>':'')+'<p class="drill-note">'+esc(dataset.note)+'</p><a class="drill-source" href="'+esc(dataset.url)+'" target="_blank" rel="noopener noreferrer">공식 IR 원문 ↗</a>';
+function pctBreak(items,heading){
+ return '<h4 class="drill-period">'+esc(heading)+'</h4>'+items.map(([name,p])=>'<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+p+'%</strong></div><div class="drill-bar"><span style="width:'+Math.max(0,Math.min(100,p))+'%"></span></div></div>').join('');
 }
-function getKind(label){
- const text=label.trim().toLowerCase();
- if(/^(revenue|매출|매출 \(gaap\)|연결 매출|매출\(usd\))$/.test(text))return "revenue";
- if(/^(영업이익|영업이익 \(gaap\)|gaap 영업이익|operating income)$/.test(text))return "operating";
- if(/(operating margin|영업이익률)/.test(text))return "opmargin";
- if(/(gross margin|매출총이익률)/.test(text))return "grossmargin";
- if(/(net margin|순이익률)/.test(text))return "netmargin";
+function segmentBreak(ds,kind){
+ const d=ds[kind==="revenue"?"r":"o"];
+ const unit=ds.unit||"USD million",suffix=unit==="KRW billion"?"B":"M";
+ if(!d){
+   if(kind==="revenue"&&ds.pct)return pctBreak(ds.pct,ds.pctLabel||"매출 비중")+(ds.extraPct?pctBreak(ds.extraPct,ds.extraPctLabel||"추가 비중"):"")+'<p class="drill-note">'+esc(ds.note)+'</p><a class="drill-source" target="_blank" rel="noopener noreferrer" href="'+esc(ds.url)+'">공시 원문 ↗</a>';
+   return '<p class="drill-note">부문별 금액은 공식 공시에서 분리 확인되지 않았습니다. N/D</p>';
+ }
+ const [total,parts,noShare]=d;
+ const lines=parts.map(([name,n])=>{
+   const pct=kind==="revenue"&&!noShare&&n>=0?(n/total*100):null;
+   const r=ds.r?.[1].find(x=>x[0]===name)?.[1];
+   const m=kind==="operating"&&r>0&&(ds.oLabel? !/EBITDA/i.test(ds.oLabel):true)?(n/r*100):null;
+   return '<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+(n<0?'−':'')+fmt(Math.abs(n))+suffix+'</strong>'+(pct!==null?'<em>'+pct.toFixed(1)+'%</em>':'')+'</div>'+(pct!==null?'<div class="drill-bar"><span style="width:'+Math.min(100,pct)+'%"></span></div>':'')+(m!==null?'<div class="drill-math">영업이익률 '+m.toFixed(1)+'%</div>':'')+'</div>';
+ }).join('');
+ const sum=parts.reduce((x,a)=>x+a[1],0);
+ const discrepancy=total-sum;
+ const basis=kind==="revenue"?"매출":(ds.oLabel||"사업부 영업이익");
+ return '<div class="drill-period">'+esc(ds.p)+' · '+esc(unit)+' · '+esc(basis)+'</div>'+lines+'<div class="drill-total"><span>표시 기준 합계</span><strong>'+fmt(total)+suffix+'</strong></div>'+(Math.abs(discrepancy)>0.5?'<div class="drill-warning">공시 합계와 잔차 '+fmt(discrepancy)+suffix+'</div>':'')+'<p class="drill-note">'+esc(ds.note||'')+'</p>'+(kind==="revenue"&&ds.pct?pctBreak(ds.pct,ds.pctLabel||"별도 분류별 매출 비중"):"")+(kind==="revenue"&&ds.extraPct?pctBreak(ds.extraPct,ds.extraPctLabel||"추가 비중"):"")+'<a class="drill-source" href="'+esc(ds.url)+'" target="_blank" rel="noopener noreferrer">기업 IR / SEC 원문 ↗</a>';
+}
+function kindOf(s){
+ s=(s||'').trim().toLowerCase();
+ if(/^(revenue|매출|매출 \(gaap\)|연결 매출|매출\(usd\)|매출 \(usd\))$/.test(s))return "revenue";
+ if(/^(operating income|영업이익|영업이익 \(gaap\)|gaap 영업이익)$/.test(s)||s.includes("segment operating")||s.includes("adjusted ebitda")||s.includes("보고부문 영업이익")||s.includes("지역부문 영업이익"))return "operating";
+ if(s.includes("operating margin")||s.includes("영업이익률"))return "opmargin";
+ if(s.includes("gross margin")||s.includes("매출총이익률"))return "grossmargin";
+ if(s.includes("net margin")||s.includes("순이익률"))return "netmargin";
  return null;
 }
-function explanation(kind,ds,period,isOld){
- if(isOld)return '<div class="drill-period">'+esc(period)+'</div><p class="drill-note">이 수치는 과거 재무 스냅샷입니다. 최신 분기별 부문 데이터를 과거 분기에 적용하면 안 되므로 분해하지 않았습니다. 상단의 최신 실적에서 해당 지표를 펼쳐 보세요.</p>';
- if(!ds)return '<p class="drill-note">이 기업의 동일 분기·동일 회계 기준 부문별 수치는 아직 공시 원문과 대조하지 못했습니다. 추정 비중을 표시하지 않습니다. <b>N/D</b></p>';
- if(kind==="revenue"||kind==="operating")return rowBlock(ds,kind);
- if(kind==="opmargin"){
-  const list=ds.o[1].map(([name,value])=>{const rev=ds.r[1].find(x=>x[0]===name);return rev&&rev[1]>0?'<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+(100*value/rev[1]).toFixed(1)+'%</strong></div><div class="drill-math">영업이익 '+fmt(value)+'M ÷ 매출 '+fmt(rev[1])+'M</div></div>':''}).join('');
-  return '<div class="drill-period">'+esc(ds.p)+' · GAAP</div>'+list+'<div class="drill-total"><span>연결 영업이익률</span><strong>'+(ds.o[0]/ds.r[0]*100).toFixed(1)+'%</strong></div><p class="drill-note">부문별 마진은 해당 부문의 매출과 영업이익이 함께 공시된 경우에만 계산합니다.</p><a class="drill-source" href="'+esc(ds.url)+'" target="_blank" rel="noopener noreferrer">공식 IR ↗</a>';
+function marginBreak(ds,kind){
+ const explicit=kind==="grossmargin"?ds.gm:ds.om;
+ if(explicit)return '<div class="drill-period">'+esc(ds.p)+' · 회사 보고 사업부별 '+(kind==="grossmargin"?"매출총이익률":"영업이익률")+'</div>'+explicit.map(([name,p])=>'<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+p+'%</strong></div></div>').join('')+'<p class="drill-note">회사 공시 마진은 반올림되어 있으므로 이익 금액을 역산해서 보고 수치로 사용하지 않습니다.</p><a class="drill-source" href="'+esc(ds.url)+'" target="_blank" rel="noopener noreferrer">공시 원문 ↗</a>';
+ if(kind==="opmargin"&&ds.o&&ds.r&&!ds.oLabel){
+   const list=ds.o[1].map(([name,op])=>{let rev=ds.r[1].find(x=>x[0]===name)?.[1];return rev>0?'<div class="drill-entry"><div class="drill-head"><span>'+esc(name)+'</span><strong>'+(op/rev*100).toFixed(1)+'%</strong></div><div class="drill-math">'+fmt(op)+' / '+fmt(rev)+'</div></div>':''}).join('');
+   return list+'<p class="drill-note">동일 기간에 공시된 부문별 이익을 부문별 매출로 나눈 Derived 수치입니다.</p>';
  }
- return '<p class="drill-note">매출총이익률·순이익률은 연결 손익계산서 기준입니다. 동일 기간의 부문별 총이익/순이익이 공개되지 않으면 부문 매출비중으로 임의 배분할 수 없습니다.</p>'+(ds?'<a class="drill-source" href="'+esc(ds.url)+'" target="_blank" rel="noopener noreferrer">공식 IR ↗</a>':'');
+ return '<p class="drill-note">동일 분기의 부문별 '+(kind==="grossmargin"?"매출총이익률":"영업이익률")+'을 검증할 수 있는 공시가 없어 N/D로 표시합니다. 연결 손익을 매출 비중대로 임의 배분하지 않습니다.</p>';
 }
-function install(root){
+function drill(ds,kind,period,old){
+ if(old)return '<div class="drill-period">기존 스냅샷 · '+esc(period)+'</div><p class="drill-note">기준 분기가 달라 최신 부문 매출을 적용할 수 없습니다. 위 최신 부문 분석 카드에서 확인하세요.</p>';
+ if(!ds)return '<p class="drill-note">동일 분기 공시 부문 데이터 아직 검증 전 (N/D). 추정치를 넣지 않았습니다.</p>';
+ if(kind==="revenue"||kind==="operating")return segmentBreak(ds,kind);
+ if(kind==="grossmargin"||kind==="opmargin")return marginBreak(ds,kind);
+ return '<p class="drill-note">연결 순이익률은 법인세·금융손익과 미배부 비용 영향을 받습니다. 부문별 순이익 미공시는 N/D.</p>';
+}
+function apply(root){
  let done=0;
- for(const panel of root.querySelectorAll('.company-panel')){
-  const ticker=panel.querySelector('h2 span')?.textContent.trim().toUpperCase();
-  const ds=D[ticker];
-  for(const card of panel.querySelectorAll('.latest-earnings,.common-block')){
-   const historical=card.classList.contains('common-block');
-   for(const row of [...card.querySelectorAll('.metric-row')]){
-    if(row.closest('details.metric-expand'))continue;
-    const label=row.querySelector('.mr-left>div>span')?.textContent||'';
-    const kind=getKind(label);
-    if(!kind)continue;
-    const period=row.querySelector('.mr-left small')?.textContent||'';
-    const details=document.createElement('details');details.className='metric-expand';
-    const summary=document.createElement('summary');summary.setAttribute('aria-label',label+' 상세 분석 펼치기');
-    row.parentNode.insertBefore(details,row);
-    details.append(summary);
-    summary.append(row);
-    const caret=document.createElement('span');caret.className='drill-caret';caret.textContent='부문별 상세 보기 ▾';summary.append(caret);
-    const body=document.createElement('div');body.className='drill-body';body.innerHTML=explanation(kind,ds,period,historical);
-    details.append(body);done++;
+ for(const panel of root.querySelectorAll(".company-panel")){
+  const ticker=panel.querySelector("h2 span")?.textContent.trim().toUpperCase(),ds=D[ticker],extra=window.AI_SEGMENTS_EXTRA?.[ticker];
+  if(extra&&!panel.querySelector(".segment-breakdown-card")){
+   const card=document.createElement("div");card.className="card latest-earnings segment-breakdown-card";
+   const unit=extra.unit==="KRW billion"?"₩":"$";
+   const specs=[["Revenue",extra.r?unit+fmt(extra.r[0])+(extra.unit==="KRW billion"?"B":"M"):"비중 공시"],...(extra.o?[[extra.oLabel||"Operating income",unit+fmt(extra.o[0])+(extra.unit==="KRW billion"?"B":"M")]]:[]),...((extra.om||extra.o)?[["Operating margin","부문별 보기"]]:[]),...(extra.gm?[["Gross margin","부문별 보기"]]:[])];
+   card.innerHTML='<h3>📊 사업부별 매출·수익성 · '+esc(extra.p)+'</h3><div class="drill-period">공시 기준 구성 · 항목을 눌러 상세 확인</div>'+specs.map(([label,value])=>'<div class="metric-row reported"><div class="mr-left"><div><span>'+esc(label)+'</span><span class="badge b-reported">Reported / Derived</span></div><small>'+esc(extra.p)+'</small></div><b>'+esc(value)+'</b></div>').join("");
+   const heading=panel.querySelector("h2");if(heading)heading.after(card);else panel.prepend(card);
+  }
+  for(const card of panel.querySelectorAll(".latest-earnings,.common-block")){
+   const old=card.classList.contains("common-block");
+   for(const row of [...card.querySelectorAll(".metric-row")]){
+    if(row.closest("details.metric-expand"))continue;
+    const label=row.querySelector(".mr-left>div>span")?.textContent||"",kind=kindOf(label);if(!kind)continue;
+    const period=row.querySelector(".mr-left small")?.textContent||"";
+    const details=document.createElement("details");details.className="metric-expand";
+    const summary=document.createElement("summary");summary.setAttribute("aria-label",label+" 세부 구성 보기");
+    row.before(details);details.append(summary);summary.append(row);
+    const car=document.createElement("span");car.className="drill-caret";car.textContent="부문별 상세 보기 ▾";summary.append(car);
+    const body=document.createElement("div");body.className="drill-body";body.innerHTML=drill(ds,kind,period,old);details.append(body);done++;
    }
   }
  }
  return done;
 }
-window.initFinanceDrilldowns=install;
-if(document.readyState==="loading")document.addEventListener('DOMContentLoaded',()=>install(document));
-else install(document);
+window.initFinanceDrilldowns=apply;
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>apply(document));else apply(document);
 })();
