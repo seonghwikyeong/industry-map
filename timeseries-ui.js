@@ -340,6 +340,7 @@ function render(){
  if(/\s\/\s/.test(active?.textContent||"")){const note=document.createElement("div");note.className="ts-warning";note.textContent="한 셀에 여러 수치가 함께 표시돼 있습니다. 차트는 첫 번째 값을 대상으로 하며, GAAP/Non-GAAP처럼 정의가 다른 수치는 별도로 검증해야 합니다.";content.append(note)}
  if(d.series?.basis){const note=document.createElement("div");note.className="ts-note";note.textContent="회계 기준: "+d.series.basis+". 동일 지표라도 회계기준·사업부 분류 변경 시 비교에 유의하세요.";content.append(note)}
  if((d.series?.basis||"").includes("TGMCharts")){const note=document.createElement("div");note.className="ts-note";const link=document.createElement("a");link.href="https://tgmcharts.com/";link.target="_blank";link.rel="noopener noreferrer";link.textContent="Data by TGMCharts (tgmcharts.com)";note.textContent="기초 자료: SEC EDGAR XBRL · ";note.appendChild(link);content.append(note)}
+ if(d.key==="eps"&&d.series?.basis.includes("TGMCharts")){const note=document.createElement("div");note.className="ts-note";note.textContent="EPS는 회사가 공시한 당시 주당 금액이며, 이후 주식분할에 맞춰 소급 조정되지 않았을 수 있습니다.";content.append(note)}
 }
 function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()});const data=viewData(el);if(data?.key&&!data.forecast){requestRemote(data.ticker,data.key).then(()=>{if(active===el&&o.classList.contains("ts-open"))render()})}}
 async function load(force){
