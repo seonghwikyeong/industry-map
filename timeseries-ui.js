@@ -1,4 +1,4 @@
-/* AI Industry Map V5.6 · extended source-backed company financial time-series charts.
+/* AI Industry Map V5.7 · extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -233,9 +233,24 @@ function metricKey(ticker,title,el){
     ORCL:{"cloud":"cloudRevenue","cloud infrastructure":"cloudInfrastructureRevenue","cloud applications":"cloudApplicationsRevenue"},
     ANET:{"product":"productRevenue","service":"serviceRevenue"},
     AMKR:{"advanced products":"advancedProductsRevenue","mainstream products":"mainstreamProductsRevenue"},
+  MU:{"cloud memory":"cloudMemoryRevenue","core data center":"coreDataCenterRevenue","mobile & client":"mobileClientRevenue","automotive & embedded":"automotiveEmbeddedRevenue"},
+  KLAC:{"semiconductor process control":"semiconductorProcessControlRevenue","specialty semiconductor process":"specialtySemiconductorRevenue","pcb & component inspection":"pcbInspectionRevenue","product":"productRevenue","service":"serviceRevenue"},
+  LRCX:{"systems":"systemsRevenue","customer support & other":"customerSupportRevenue"},
+  LITE:{"components":"componentsRevenue","systems":"systemsRevenue"},
+  COHR:{"datacenter & communications":"datacenterCommunicationsRevenue","industrial":"industrialRevenue"},
+  AMAT:{"semiconductor systems":"semiconductorSystemsRevenue","applied global services":"appliedGlobalServicesRevenue"},
     VRT:{"amer":"americasRevenue","americas":"americasRevenue","apac":"apacRevenue","emea":"emeaRevenue"}
    };
    if(extra[ticker]?.[value])return extra[ticker][value];
+   const q={
+    MU:{"cloud memory":"cloudMemoryRevenue","core data center":"coreDataCenterRevenue","mobile & client":"mobileClientRevenue","automotive & embedded":"automotiveEmbeddedRevenue"},
+    KLAC:{"semiconductor process control":"semiconductorProcessControlRevenue","specialty semiconductor process":"specialtySemiconductorRevenue","pcb & component inspection":"pcbInspectionRevenue"},
+    LRCX:{"systems":"systemsRevenue","customer support & other":"customerSupportRevenue"},
+    LITE:{"components":"componentsRevenue","systems":"systemsRevenue"},
+    COHR:{"datacenter & communications":"datacenterCommunicationsRevenue","industrial":"industrialRevenue"},
+    AMAT:{"semiconductor systems":"semiconductorSystemsRevenue","applied global services":"appliedGlobalServicesRevenue"}
+   };
+   if(q[ticker]?.[value])return q[ticker][value];
   }
  }
  const businessMetrics={
@@ -423,7 +438,7 @@ async function load(force){
  loading=(async()=>{try{const r=await fetch("./timeseries.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const json=await r.json();if(!json.companies||typeof json.companies!=="object")throw Error("Invalid timeseries");DB=json;
   // Supplemental compact sources preserve the original V5.5 dataset.
   try{
-   const extraRes=await fetch("./timeseries-v56.json?v=56",{cache:"no-store"});
+   const extraRes=await fetch("./timeseries-v56.json?v=57",{cache:"no-store"});
    if(extraRes.ok){
     const supplement=await extraRes.json();
     for(const [ticker,record] of Object.entries(supplement.companies||{})){
