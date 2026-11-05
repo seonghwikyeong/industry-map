@@ -55,7 +55,7 @@ async function main(){
  }
  console.log("PASS TSM, ASML, SKH and Samsung official-source quarterly histories");
  const added=Object.entries(supplement.companies);
- assert.equal(added.length,15,"15 added source-backed company datasets");
+ assert.equal(added.length,18,"15 added source-backed company datasets");
  let points=0;
  for(const [ticker,record] of added){
    assert.ok(panel(ticker),"added ticker missing from map: "+ticker);
@@ -70,14 +70,14 @@ async function main(){
      points+=values.length;
    }
  }
- assert.equal(points,365,"V5.7 supplemental reported point coverage");
+ assert.equal(points,417,"V5.7 supplemental reported point coverage");
  const amazon=panel("AMZN");
  const amazonRevenue=[...amazon.querySelectorAll(".latest-earnings .metric-row")].find(r=>/매출|revenue|sales/i.test(r.querySelector(".mr-left")?.textContent||""));
  if(amazonRevenue){
    const pop=click(amazonRevenue.querySelector("b"));
    assert.ok(pop.querySelectorAll("svg circle").length>=6,"Amazon latest total revenue should show six quarters");
  }
- console.log("PASS V5.7: 15 new companies, 111 financial/segment metrics and 365 source-linked points");
+ console.log("PASS V5.7: 18 additional companies, 137 financial/segment metrics and 417 source-linked points");
  let checked=0,noNumerics=0;for(const p of panels){const ticker=p.querySelector("h2 span")?.textContent.trim();assert.ok(ticker,"ticker");const numeric=[...p.querySelectorAll(".metric-row > b")].filter(x=>/^\s*[+\-−]?(?:NT\$|₩|€|£|¥|\$)?\s*\d/.test(x.textContent.trim()));const clickable=p.querySelector(".ts-clickable");if(numeric.length){assert.ok(clickable,"no clickable metric for "+ticker);checked++}else noNumerics++}
  console.log("PASS clickable historical-chart controls on "+checked+" numeric-company panels; "+noNumerics+" N/A-only panels exempt");
  w.close();
