@@ -1,0 +1,771 @@
+{
+  "generated_at": "2026-11-05",
+  "description": "Only confirmed historical quarterly points; excludes forecasts and period-incompatible segment definitions. SEC XBRL collection adds GAAP metrics.",
+  "companies": {
+    "MSFT": {
+      "azureRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 16021,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 17337,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 18540,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 20712,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 22384,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 24129,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 26008,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 29417,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 33165,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "microsoft365CloudRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 20017,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 20686,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 20967,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 22935,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 23694,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 24466,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 25418,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 26721,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 27778,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "productivityServerLicensingRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 8051,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 8307,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 8731,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 10302,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 8678,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 8814,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 8760,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 11033,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 8407,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "searchAdvertisingRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 5159,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 5773,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 5437,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 5802,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 5942,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 6393,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 6065,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 6435,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 6554,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "xboxRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 5621,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 6581,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 5721,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 5532,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 5508,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 5958,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 5341,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 4983,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 5379,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "industrySolutionsRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 4459,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 4544,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 4579,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 4835,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 4894,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 4994,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 5165,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 5292,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 5337,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "windowsDevicesRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 4329,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 4512,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 4145,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 4329,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 4551,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 4481,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 4042,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 4013,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 3551,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "agentsInfraRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 50476,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 52766,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 54763,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 60778,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 61672,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 64441,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 67438,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 74576,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 76795,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "devicesConsumerRevenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 15109,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 16866,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 15303,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 15663,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 16001,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 16832,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 15448,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 15431,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 15484,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "agentsInfraOperatingIncome": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "Microsoft FY27 recast product/segment reporting",
+        "points": [
+          {
+            "end": "2024-09-30",
+            "value": 26171,
+            "period": "FY25 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2024-12-31",
+            "value": 26718,
+            "period": "FY25 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-03-31",
+            "value": 27704,
+            "period": "FY25 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-06-30",
+            "value": 30221,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 32718,
+            "period": "FY26 Q1",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-12-31",
+            "value": 33167,
+            "period": "FY26 Q2",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-03-31",
+            "value": 33748,
+            "period": "FY26 Q3",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 36732,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 40558,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "revenue": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP consolidated",
+        "points": [
+          {
+            "end": "2025-06-30",
+            "value": 76441,
+            "period": "FY25 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2025-09-30",
+            "value": 77673,
+            "period": "FY26 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 90007,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 92279,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      },
+      "operatingIncome": {
+        "unit": "USD million",
+        "frequency": "quarterly",
+        "basis": "GAAP consolidated",
+        "points": [
+          {
+            "end": "2025-09-30",
+            "value": 37961,
+            "period": "FY26 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-06-30",
+            "value": 40603,
+            "period": "FY26 Q4",
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported"
+          },
+          {
+            "end": "2026-09-30",
+            "value": 45915,
+            "period": "FY27 Q1",
+            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
+            "kind": "reported"
+          }
+        ]
+      }
+    }
+  }
+}
