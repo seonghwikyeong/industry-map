@@ -1,50 +1,43 @@
-name: Update financial time series
+name: Check financial time-series provider
 
 on:
   schedule:
-    # Daily 05:41 UTC / 14:41 Korea; SEC historical series refresh
+    # Check keyless SEC statement provider daily. The website fetches on demand.
     - cron: '41 5 * * *'
   workflow_dispatch:
   push:
     branches: [main]
     paths:
       - 'timeseries-ui.js'
-      - 'scripts/update_timeseries.py'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: ai-industry-timeseries
+  group: ai-industry-timeseries-provider-check
   cancel-in-progress: false
 
 jobs:
-  refresh:
+  check-provider:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Collect historical SEC XBRL financial facts
-        run: python scripts/update_timeseries.py
-
-      - name: Commit historical data if changed
+      - name: Verify SEC-derived statement API response and attribution
+        shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add timeseries.json
-          if ! git diff --cached --quiet; then
-            git commit -m "data: refresh SEC quarterly historical financials"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          else
-            echo "No data updates"
-          fi
+          python - <<'PY'
+          import json, urllib.request
+          url = 'https://tgmcharts.com/api/v1/statements/MSFT/income-statement?period=quarterly&years=2'
+          req = urllib.request.Request(url, headers={'User-Agent':'AIIndustryMap/5.0 (open-source site; GitHub Actions)','Accept':'application/json'})
+          with urllib.request.urlopen(req, timeout=25) as r:
+              data=json.load(r)
+          print('Provider:', data.get('source'))
+          print('Ticker:', data.get('symbol'))
+          print('Status:', data.get('status','available'))
+          print('Quarterly rows:', len(data.get('rows') or []))
+          if not data.get('rows'):
+              raise SystemExit('Provider returned no historical rows; check coverage or availability')
+          sample=data['rows'][0]
+          print('Newest period:', sample.get('periodEnd'))
+          print('Available concepts:', list(sample.get('metrics') or {})[:8])
+          PY
