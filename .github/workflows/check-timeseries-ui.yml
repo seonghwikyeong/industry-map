@@ -1,0 +1,29 @@
+name: Verify time-series UI interactions
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/check_timeseries_ui.cjs'
+      - 'timeseries-ui.js'
+      - 'index.html'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser DOM test framework
+        run: npm install --no-save --no-audit --no-fund jsdom@26
+      - name: Verify syntax
+        run: node --check timeseries-ui.js
+      - name: Test click-to-chart interactions for 47 companies
+        run: node scripts/check_timeseries_ui.cjs
