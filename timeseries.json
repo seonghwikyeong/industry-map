@@ -706,35 +706,79 @@
       "revenue": {
         "unit": "USD million",
         "frequency": "quarterly",
-        "basis": "GAAP consolidated",
+        "basis": "Microsoft 2026-09 FY27 분류 재작성 기준 연결 매출 (Agents and Infra + Devices and Consumer)",
         "points": [
           {
-            "end": "2025-06-30",
-            "value": 76441,
-            "period": "FY25 Q4",
+            "end": "2024-09-30",
+            "period": "FY25 Q1",
+            "value": 65585,
             "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
-            "kind": "reported"
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
+          },
+          {
+            "end": "2024-12-31",
+            "period": "FY25 Q2",
+            "value": 69632,
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
+          },
+          {
+            "end": "2025-03-31",
+            "period": "FY25 Q3",
+            "value": 70066,
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
+          },
+          {
+            "end": "2025-06-30",
+            "period": "FY25 Q4",
+            "value": 76441,
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
           },
           {
             "end": "2025-09-30",
-            "value": 77673,
             "period": "FY26 Q1",
-            "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
-            "kind": "reported"
+            "value": 77673,
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
+          },
+          {
+            "end": "2025-12-31",
+            "period": "FY26 Q2",
+            "value": 81273,
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
+          },
+          {
+            "end": "2026-03-31",
+            "period": "FY26 Q3",
+            "value": 82886,
+            "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
           },
           {
             "end": "2026-06-30",
-            "value": 90007,
             "period": "FY26 Q4",
+            "value": 90007,
             "source": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm",
-            "kind": "reported"
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
           },
           {
             "end": "2026-09-30",
-            "value": 92279,
             "period": "FY27 Q1",
+            "value": 92279,
             "source": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast",
-            "kind": "reported"
+            "kind": "reported",
+            "note": "FY27 분류로 재작성된 두 사업부 합계. 연결 매출과 일치."
           }
         ]
       },
