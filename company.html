@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="AI Industry Map — 기업별 심층 리서치">
+<title>기업 분석 | AI Industry Map</title>
+<style>
+:root{--bg:#06101c;--panel:#081626;--line:#213b59;--text:#eef5ff;--muted:#8fa5c1;--cyan:#58ded1;--green:#69df92}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+a{color:#8fdbef}a:hover{color:#cbfaff}
+.topbar{min-height:66px;padding:14px clamp(18px,4vw,64px);display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:1px solid var(--line);background:#071321;flex-wrap:wrap}
+.logo{font-size:17px;font-weight:850;text-decoration:none;color:var(--text)}.logo b{color:var(--cyan)}.back{display:inline-flex;gap:9px;align-items:center;border:1px solid #335777;border-radius:9px;text-decoration:none;padding:9px 12px;color:#d0e9ff;font-size:12px}
+.page{max-width:1660px;margin:auto;padding:25px clamp(16px,3vw,45px) 70px}
+.hero{border:1px solid #2f4c68;background:linear-gradient(125deg,#0e2b3d,#081726);padding:26px;border-radius:18px;margin-bottom:19px}
+.kicker{font-size:10px;color:#6de4cd;font-weight:750;letter-spacing:1.4px}.hero h1{font-size:32px;margin:8px 0 12px}.hero h1 span{color:#8fb7d5;font-size:20px}.hero p{font-size:12px;line-height:1.7;color:#a9bfd3;margin:0}
+.tools{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:15px 0}.tools label{font-size:12px;color:#99bed5}.tools select{margin-left:8px;padding:9px 12px;min-width:200px;background:#0d2235;color:white;border:1px solid #325773;border-radius:8px}
+.layout{display:grid;grid-template-columns:255px minmax(0,1fr);gap:18px;align-items:start}
+.toc{position:sticky;top:16px;border:1px solid var(--line);border-radius:14px;background:#091a2b;padding:16px;max-height:calc(100vh - 32px);overflow-y:auto}
+.toc h2{font-size:12px;color:#63d9d3;margin:2px 0 13px}.toc a{display:block;font-size:12px;line-height:1.4;color:#bdcfe2;padding:9px 8px;text-decoration:none;border-radius:7px;border-left:2px solid transparent}.toc a:hover{background:#132d44;border-left-color:#54d8c8}
+.content{min-width:0}.source-panel{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:20px}
+.source-panel .company-panel{display:block!important}.source-panel .eyebrow{display:none}.source-panel .company-panel>h2{display:none}
+.source-panel .company-panel>.card{margin-bottom:13px}
+.section-banner{font-size:16px;font-weight:750;color:#b4edf0;padding:16px 0 10px;margin-top:22px;border-bottom:1px solid var(--line)}
+.deep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:16px}
+.research-block{border:1px solid #254866;background:#0a1a2c;border-radius:12px;padding:18px;min-height:115px}
+.research-block h3{font-size:14px;margin:0 0 10px}.research-block p{font-size:12px;line-height:1.65;color:#a6bfd5;margin:0}
+.research-block .status{font-size:9px;color:#dfbd77;border:1px solid #6e5631;padding:3px 7px;border-radius:99px;float:right}
+.notice{color:#d7be88;font-size:11px;line-height:1.6;margin:10px 0 20px}
+.error{border:1px solid #a45f60;padding:18px;border-radius:12px;color:#f2c9c9;background:#2c1923}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.toc{position:static;max-height:none}.deep-grid{grid-template-columns:1fr}.source-panel{padding:12px}.hero h1{font-size:26px}.tools select{min-width:150px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+<a class="logo" href="./index.html">AI <b>Industry Map</b> <span style="font-size:12px;color:#8fa5c1;font-weight:500">/ Company Research</span></a>
+<a class="back" href="./index.html">← 산업지도 돌아가기</a>
+</header>
+<main class="page">
+<div class="hero">
+<div class="kicker">AI VALUE CHAIN · COMPANY RESEARCH</div>
+<h1 id="company-title">기업 데이터를 불러오는 중…</h1>
+<p>기존 산업지도 기업별 상세 패널의 모든 정보를 동일한 원본에서 불러옵니다. 최신 실적·가이던스·FA·밸류에이션 등 항목별 기준일은 각각 확인하세요.</p>
+</div>
+<div class="tools"><label for="company-picker">다른 기업 살펴보기 <select id="company-picker" aria-label="기업 선택"><option value="">기업 불러오는 중…</option></select></label><span style="color:#89b4c8;font-size:11px" id="data-state">원본 연결 중</span></div>
+<div id="error"></div>
+<div class="layout">
+<nav class="toc" aria-label="분석 항목 탐색"><h2>분석 목차</h2><div id="table-of-contents"><span style="color:#9ab3ca;font-size:12px">데이터 로딩 중</span></div></nav>
+<div class="content">
+<section class="source-panel" id="original-analysis" aria-label="산업지도 기존 기업 분석">
+<div id="company-original">기업 분석 데이터를 가져오는 중입니다.</div>
+</section>
+<h2 class="section-banner" id="deep-dive">DEEP DIVE · 심층 분석 워크스페이스</h2>
+<p class="notice">아래 영역은 향후 기업별 심층 분석을 확장하기 위한 목차입니다. 아직 분석하지 않은 내용은 임의로 채우지 않았으며, 기존 상세 패널의 수치와 출처는 위에 모두 유지됩니다.</p>
+<div class="deep-grid">
+<section class="research-block" id="business-model"><span class="status">분석 예정</span><h3>01 · 사업 구조와 경쟁 우위</h3><p>사업부별 제품·매출 구성, 핵심 고객, 경쟁 구도, 진입장벽 및 지속 가능한 경쟁력.</p></section>
+<section class="research-block" id="operating-drivers"><span class="status">분석 예정</span><h3>02 · 핵심 KPI와 성장 동인</h3><p>제품 출하량, 수율, GPU·HBM 공급, CSP 투자, 수주잔고 등 기업별로 다른 지표.</p></section>
+<section class="research-block" id="forecast-model"><span class="status">분석 예정</span><h3>03 · 중장기 실적 추정</h3><p>사업부별 매출·마진 가정, CAPEX, FCF, FY27–FY29 시나리오와 민감도 분석.</p></section>
+<section class="research-block" id="valuation-scenarios"><span class="status">분석 예정</span><h3>04 · 밸류에이션과 시나리오</h3><p>Forward P/E, EV/EBITDA, FCF Yield, Bull/Base/Bear 및 핵심 가정 점검.</p></section>
+<section class="research-block" id="competition"><span class="status">분석 예정</span><h3>05 · 경쟁사 비교</h3><p>피어 그룹별 성장성·마진·R&D 효율·가격결정력·시장 점유율 비교.</p></section>
+<section class="research-block" id="thesis-monitor"><span class="status">분석 예정</span><h3>06 · 투자 논리와 추적 항목</h3><p>투자 thesis, 반증 요인, 다음 실적 체크리스트, 트리거와 리스크 모니터링.</p></section>
+</div>
+</div>
+</div>
+</main>
+<script>
+(async function(){
+  const params=new URLSearchParams(location.search);
+  const requested=(params.get('ticker')||'').trim().toUpperCase();
+  const title=document.getElementById('company-title');
+  const dataState=document.getElementById('data-state');
+  const original=document.getElementById('company-original');
+  const picker=document.getElementById('company-picker');
+  const toc=document.getElementById('table-of-contents');
+  const error=document.getElementById('error');
+  try{
+    const resp=await fetch('./index.html',{cache:'no-cache'});
+    if(!resp.ok)throw new Error('원본 index.html을 불러오지 못했습니다. HTTP '+resp.status);
+    const html=await resp.text();
+    const doc=new DOMParser().parseFromString(html,'text/html');
+    const panels=[...doc.querySelectorAll('.company-panels > .company-panel')];
+    if(!panels.length)throw new Error('원본 기업 상세 패널을 찾지 못했습니다.');
+    const entries=panels.map(panel=>{
+      const heading=panel.querySelector('h2');
+      return {panel,name:heading?.childNodes[0]?.textContent.trim()||'Unknown',ticker:heading?.querySelector('span')?.textContent.trim().toUpperCase()||''};
+    }).filter(entry=>entry.ticker);
+    picker.replaceChildren();
+    for(const entry of entries){
+      const option=document.createElement('option');
+      option.value=entry.ticker;
+      option.textContent=entry.name+' ('+entry.ticker+')';
+      picker.append(option);
+    }
+    const selected=entries.find(e=>e.ticker===requested)||(requested?null:entries[0]);
+    if(!selected)throw new Error('해당 티커의 기업 정보가 없습니다: '+requested);
+    picker.value=selected.ticker;
+    picker.addEventListener('change',()=>{location.href='./company.html?ticker='+encodeURIComponent(picker.value)});
+    title.replaceChildren(document.createTextNode(selected.name+' '));
+    const tickerNode=document.createElement('span');
+    tickerNode.textContent=selected.ticker;title.append(tickerNode);
+    document.title=selected.name+' ('+selected.ticker+') | AI Industry Map';
+    const sourceStyle=doc.querySelector('head style');
+    if(sourceStyle){
+      const importedStyle=document.createElement('style');
+      importedStyle.textContent=sourceStyle.textContent+'\n.source-panel .company-panel{display:block!important}.source-panel .company-panel>h2{display:none!important}';
+      document.head.append(importedStyle);
+    }
+    // 원본 상세 패널 전체를 복사하고 기존 구분·출처·링크를 유지한다.
+    // 별도 데이터베이스가 없으므로 index.html을 단일 원본으로 사용한다.
+    const copy=document.importNode(selected.panel,true);
+    copy.querySelectorAll('[id]').forEach(el=>{el.id='research-'+el.id});
+    original.replaceChildren(copy);
+    dataState.textContent='index.html 원본 동기화 · '+entries.length+'개 기업';
+    toc.replaceChildren();
+    const originalLink=document.createElement('a');
+    originalLink.href='#original-analysis';originalLink.textContent='기존 기업분석 전체 보기';toc.append(originalLink);
+    const cards=[...copy.querySelectorAll(':scope > .card')];
+    const seen=new Set();
+    cards.forEach((card,i)=>{
+      const heading=card.querySelector('h3');
+      if(!heading)return;
+      const label=heading.textContent.trim();
+      let slug='detail-'+i;
+      card.id=slug;
+      if(seen.has(label))return;
+      seen.add(label);
+      const link=document.createElement('a');link.href='#'+slug;link.textContent=label;toc.append(link);
+    });
+    const deepItems=[
+      ['deep-dive','심층 분석 영역'],['business-model','사업 구조 / 경쟁력'],['operating-drivers','핵심 KPI / 성장 동인'],
+      ['forecast-model','중장기 실적 추정'],['valuation-scenarios','밸류에이션 시나리오'],
+      ['competition','경쟁사 비교'],['thesis-monitor','투자 논리 / 추적']
+    ];
+    for(const [id,label] of deepItems){
+      const link=document.createElement('a');link.href='#'+id;link.textContent=label;toc.append(link);
+    }
+  }catch(e){
+    dataState.textContent='데이터 연결 오류';
+    original.textContent='';
+    error.className='error';
+    error.textContent='기업 페이지 로딩에 실패했습니다. '+e.message+' · 산업지도로 돌아가거나 URL 티커를 확인해 주세요.';
+    title.textContent='기업 정보를 불러오지 못했습니다';
+    toc.replaceChildren();
+  }
+})();
+</script>
+</body>
+</html>
