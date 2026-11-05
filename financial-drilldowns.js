@@ -45,7 +45,14 @@ function marginBreak(ds,kind){
  return '<p class="drill-note">동일 분기의 부문별 '+(kind==="grossmargin"?"매출총이익률":"영업이익률")+'을 검증할 수 있는 공시가 없어 N/D로 표시합니다. 연결 손익을 매출 비중대로 임의 배분하지 않습니다.</p>';
 }
 function drill(ds,kind,period,old){
- if(old)return '<div class="drill-period">기존 스냅샷 · '+esc(period)+'</div><p class="drill-note">기준 분기가 달라 최신 부문 매출을 적용할 수 없습니다. 위 최신 부문 분석 카드에서 확인하세요.</p>';
+ if(old){
+  if(!ds)return '<div class="drill-period">기존 스냅샷 · '+esc(period)+'</div><p class="drill-note">해당 기업의 검증된 사업부별 분해 데이터가 아직 없습니다 (N/D).</p>';
+  const normalize=s=>String(s).toUpperCase().replace(/FISCAL|FY20(\d\d)/g,(m,y)=>y?'FY'+y:'FY').replace(/[^A-Z0-9]/g,'');
+  const same=normalize(period)===normalize(ds.p);
+  const latest=(kind==="revenue"||kind==="operating")?segmentBreak(ds,kind):(kind==="grossmargin"||kind==="opmargin")?marginBreak(ds,kind):'<p class="drill-note">사업부별 순이익 자료는 별도 공시 여부 확인이 필요합니다.</p>';
+  if(same)return '<div class="drill-period">기존 재무 지표와 부문 데이터 기준 일치 · '+esc(period)+'</div>'+latest;
+  return '<div class="drill-warning">선택한 재무지표의 기준: '+esc(period)+' / 아래 사업부 자료: '+esc(ds.p)+' — 서로 다른 기간입니다. 기존 금액에 아래 비중을 곱하지 마세요.</div>'+latest;
+ }
  if(!ds)return '<p class="drill-note">동일 분기 공시 부문 데이터 아직 검증 전 (N/D). 추정치를 넣지 않았습니다.</p>';
  if(kind==="revenue"||kind==="operating")return segmentBreak(ds,kind);
  if(kind==="grossmargin"||kind==="opmargin")return marginBreak(ds,kind);
