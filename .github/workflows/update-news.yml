@@ -5,6 +5,10 @@ on:
     # Every 3 hours at :17 UTC; avoids GitHub Actions high-load top-of-hour delays.
     - cron: '17 */3 * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "news-ui.js"
 
 permissions:
   contents: write
