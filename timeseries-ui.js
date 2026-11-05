@@ -33,6 +33,123 @@ const labels={
 "agents and infra":"agentsInfraRevenue",
 "devices and consumer":"devicesConsumerRevenue"
 };
+
+/* On-demand, no-bulk-redistribution external SEC statement fallback.
+   TGMCharts keyless API: https://tgmcharts.com/developers/docs/statements
+   Public-domain underlying SEC facts; requests occur only on actual chart clicks.
+*/
+const REMOTE={};
+const remoteCalls=new Map();
+const RATIO_SLUGS={
+ "per":"pe-ratio","p/e":"pe-ratio","p/e ratio":"pe-ratio","pe ratio":"pe-ratio",
+ "ps":"ps-ratio","p/s":"ps-ratio","p/b":"pb-ratio","p/ocf":"pocf-ratio","p/fcf":"pfcf-ratio",
+ "ev/ebitda":"ev-ebitda","ev/ebit":"ev-ebit","ev/sales":"ev-sales","ev/revenue":"ev-sales",
+ "ev/fcf":"ev-fcf","dividend yield":"dividend-yield","roe":"roic","roic":"roic"
+};
+const INCOME_KEYS=["revenue","grossProfit","operatingIncome","netIncome","eps","grossMargin","operatingMargin","netMargin","yoyGrowth"];
+const CASH_KEYS=["operatingCashFlow","capex","freeCashFlow"];
+const BAL_KEYS=["assets","liabilities","cash"];
+function remoteGroup(key){
+ if(INCOME_KEYS.includes(key))return "income-statement";
+ if(CASH_KEYS.includes(key))return "cash-flow";
+ if(BAL_KEYS.includes(key))return "balance-sheet";
+ return null;
+}
+function remoteValue(row,key,group){
+ const v=row.metrics||{};
+ const val=x=>typeof x==="number"&&Number.isFinite(x)?x:null;
+ if(group==="income-statement"){
+  if(key==="revenue")return val(v.revenue);
+  if(key==="grossProfit")return val(v.grossProfit);
+  if(key==="operatingIncome")return val(v.operatingIncome);
+  if(key==="netIncome")return val(v.netIncome);
+  if(key==="eps")return val(v.epsDiluted);
+  const denominator=val(v.revenue);
+  if(!denominator)return null;
+  if(key==="grossMargin")return val(v.grossProfit)===null?null:100*v.grossProfit/denominator;
+  if(key==="operatingMargin")return val(v.operatingIncome)===null?null:100*v.operatingIncome/denominator;
+  if(key==="netMargin")return val(v.netIncome)===null?null:100*v.netIncome/denominator;
+ }
+ if(group==="cash-flow"){
+  if(key==="operatingCashFlow")return val(v.operatingCashFlow);
+  if(key==="capex")return val(v.capitalExpenditure);
+  if(key==="freeCashFlow")return val(v.operatingCashFlow)!==null&&val(v.capitalExpenditure)!==null?v.operatingCashFlow-v.capitalExpenditure:null;
+ }
+ if(group==="balance-sheet"){
+  if(key==="assets")return val(v.totalAssets);
+  if(key==="liabilities")return val(v.totalLiabilities);
+  if(key==="cash")return val(v.cashAndCashEquivalents);
+ }
+ return null;
+}
+function remoteCurrency(key){return key==="eps"?"USD/share":["grossMargin","operatingMargin","netMargin","yoyGrowth"].includes(key)?"%":"USD million";}
+function extractRemote(ticker,json,group){
+ if(!Array.isArray(json.rows)||json.currency!=="USD")return;
+ const keys=group==="income-statement"?INCOME_KEYS:group==="cash-flow"?CASH_KEYS:BAL_KEYS;
+ const origin="https://tgmcharts.com/stocks/"+encodeURIComponent(ticker)+"/financials";
+ const full=json.rows.filter(r=>r&&r.periodEnd&&r.fiscalPeriod&&r.fiscalPeriod.startsWith("Q")
+      &&r.periodEnd<=new Date().toISOString().slice(0,10)
+      &&(!r.filed||r.filed<=new Date().toISOString().slice(0,10)));
+ const sorted=full.sort((a,b)=>a.periodEnd.localeCompare(b.periodEnd));
+ if(!REMOTE[ticker])REMOTE[ticker]={};
+ for(const key of keys){
+  if(key==="yoyGrowth")continue;
+  const points=[];
+  for(const row of sorted){
+   const original=remoteValue(row,key,group);
+   if(original===null)continue;
+   const percentage=["grossMargin","operatingMargin","netMargin"].includes(key);
+   const share=key==="eps";
+   const value=percentage||share?original:original/1e6;
+   if(!Number.isFinite(value))continue;
+   const srcKey=key==="eps"?"epsDiluted":key==="assets"?"totalAssets":key==="liabilities"?"totalLiabilities":key==="cash"?"cashAndCashEquivalents":key==="capex"?"capitalExpenditure":key;
+   const provenance=row.provenance?.[srcKey];
+   let source=origin;
+   if(json.cik&&provenance?.accn)source="https://www.sec.gov/Archives/edgar/data/"+Number(json.cik)+"/"+provenance.accn.replace(/-/g,"")+"/";
+   points.push({end:row.periodEnd,period:"FY"+String(row.fiscalYear||"").slice(-2)+" "+row.fiscalPeriod,value:Math.round(value*1e5)/1e5,
+       source,kind:provenance?.derived?"derived":"reported",note:provenance?.derived||""});
+  }
+  if(points.length){
+    REMOTE[ticker][key]={unit:remoteCurrency(key),frequency:group==="balance-sheet"?"reported instant":"quarterly",basis:"TGMCharts 제공 SEC XBRL 공시 · "+group,points:points.slice(-52)};
+  }
+ }
+ if(group==="income-statement"){
+  const rv=REMOTE[ticker].revenue?.points||[];
+  const growth=[];
+  for(const x of rv){const before=rv.filter(p=>{const dif=(Date.parse(x.end)-Date.parse(p.end))/864e5;return dif>345&&dif<385});if(!before.length)continue;
+    const p=before.sort((a,b)=>Math.abs(Date.parse(x.end)-Date.parse(a.end)-365*864e5)-Math.abs(Date.parse(x.end)-Date.parse(b.end)-365*864e5))[0];
+    if(p.value)growth.push({end:x.end,period:x.period,value:Math.round((x.value/p.value-1)*1e7)/1e5,source:x.source,kind:"derived",note:"동일 분기 전년 대비 매출 성장률"});
+  }
+  if(growth.length)REMOTE[ticker].yoyGrowth={unit:"%",frequency:"quarterly",basis:"TGMCharts SEC 분기 매출 YoY 계산",points:growth};
+ }
+}
+async function requestRemote(ticker,key){
+ const group=remoteGroup(key),slug=key.startsWith("ratio:")?key.slice(6):null;
+ if(!group&&!slug)return;
+ const identifier=ticker+"|"+(slug||group);
+ if(remoteCalls.has(identifier))return remoteCalls.get(identifier);
+ const promise=(async()=>{
+  const url=slug?"https://tgmcharts.com/api/v1/series/"+encodeURIComponent(ticker)+"/"+slug+"?years=10":
+        "https://tgmcharts.com/api/v1/statements/"+encodeURIComponent(ticker)+"/"+group+"?period=quarterly&years=8";
+  try{
+    const response=await fetch(url,{headers:{Accept:"application/json"}});
+    if(!response.ok)throw Error(String(response.status));
+    const payload=await response.json();
+    if(slug){
+      if(Array.isArray(payload.points)&&payload.points.length){
+       if(!REMOTE[ticker])REMOTE[ticker]={};
+       REMOTE[ticker][key]={unit:payload.unit==="ratio"?"multiple":payload.unit==="percent"?"%":payload.unit==="usd"?"USD million":"number",
+         frequency:payload.basis||"daily",basis:"TGMCharts 제공 "+(payload.label||slug)+" (시장가격 포함, SEC 단독 공시 아님)",
+         points:payload.points.filter(x=>Number.isFinite(x.value)&&x.date).map(x=>({end:x.date,
+           value:payload.unit==="usd"?x.value/1e6:x.value,source:"https://tgmcharts.com/stocks/"+encodeURIComponent(ticker),kind:"reported"})).slice(-250)};
+      }
+    }else extractRemote(ticker,payload,group);
+  }catch(error){console.warn("Historical financial API unavailable",ticker,group||slug,error)}
+ })();
+ remoteCalls.set(identifier,promise);
+ return promise;
+}
+
 const localized={
 "revenue":"연결 매출","operatingIncome":"영업이익","netIncome":"순이익","grossProfit":"매출총이익",
 "eps":"희석 주당순이익","grossMargin":"매출총이익률","operatingMargin":"영업이익률",
@@ -58,6 +175,7 @@ function metricKey(ticker,title,el){
  }
  if(ticker==="NVDA"&&(/data center|데이터센터/i.test(value))&&el.closest(".drill-body,.latest-earnings"))return "dataCenterRevenue";
  if(ticker==="AMD"&&(/data center|데이터센터/i.test(value))&&el.closest(".drill-body,.latest-earnings"))return "dataCenterRevenue";
+ if(RATIO_SLUGS[value])return "ratio:"+RATIO_SLUGS[value];
  if(labels[value])return labels[value];
  if(ticker==="MSFT"&&/\bazure\b/i.test(value))return "azureRevenue";
  if(/영업.?현금흐름/.test(value))return "operatingCashFlow";
@@ -95,7 +213,10 @@ function viewData(el){
  const title=metricText(el),key=metricKey(ticker,title,el),parsed=num(el.textContent);
  if(!parsed||!/[-+]?\d/.test(el.textContent))return null;
  const forecast=isForecast(el,title);
- let series=key&&!forecast?DB.companies?.[ticker]?.[key]:null;
+ let local=key&&!forecast?DB.companies?.[ticker]?.[key]:null;
+ let remote=key&&!forecast?REMOTE[ticker]?.[key]:null;
+ let series=remote?.points?.length>local?.points?.length?remote:local;
+ if(!series)series=remote||local;
  let points=Array.isArray(series?.points)?series.points.filter(p=>typeof p.value==="number"&&Number.isFinite(p.value)&&p.end):[];
  if(series?.unit==="USD million"&&parsed.unit==="%"&&!["yoyGrowth","grossMargin","operatingMargin","netMargin"].includes(key))points=[];
  if(series?.unit==="USD million"&&parsed.unit==="multiple")points=[];
@@ -188,8 +309,9 @@ function render(){
  if(d.parsed?.unit==="multiple"&&d.series?.unit==="USD million"){const note=document.createElement("div");note.className="ts-warning";note.textContent="화면 값은 배수(x)인데 공시 시계열은 금액입니다. 기존 숫자의 단위 오류 가능성이 있어 직접 검증이 필요합니다.";content.append(note)}
  if(/\s\/\s/.test(active?.textContent||"")){const note=document.createElement("div");note.className="ts-warning";note.textContent="한 셀에 여러 수치가 함께 표시돼 있습니다. 차트는 첫 번째 값을 대상으로 하며, GAAP/Non-GAAP처럼 정의가 다른 수치는 별도로 검증해야 합니다.";content.append(note)}
  if(d.series?.basis){const note=document.createElement("div");note.className="ts-note";note.textContent="회계 기준: "+d.series.basis+". 동일 지표라도 회계기준·사업부 분류 변경 시 비교에 유의하세요.";content.append(note)}
+ if((d.series?.basis||"").includes("TGMCharts")){const note=document.createElement("div");note.className="ts-note";const link=document.createElement("a");link.href="https://tgmcharts.com/";link.target="_blank";link.rel="noopener noreferrer";link.textContent="Data by TGMCharts (tgmcharts.com)";note.textContent="기초 자료: SEC EDGAR XBRL · ";note.appendChild(link);content.append(note)}
 }
-function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()})}
+function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()});const data=viewData(el);if(data?.key&&!data.forecast){requestRemote(data.ticker,data.key).then(()=>{if(active===el&&o.classList.contains("ts-open"))render()})}}
 async function load(force){
  if(loading&&!force)return loading;
  loading=(async()=>{try{const r=await fetch("./timeseries.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const json=await r.json();if(!json.companies||typeof json.companies!=="object")throw Error("Invalid timeseries");DB=json;loaded=true}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
