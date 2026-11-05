@@ -242,6 +242,8 @@ function metricKey(ticker,title,el){
     DELL:{"infrastructure solutions":"infrastructureSolutionsRevenue","client solutions":"clientSolutionsRevenue","ai-optimized servers":"aiOptimizedServersRevenue","traditional servers and networking":"traditionalServersRevenue","storage":"storageRevenue"},
     CSCO:{"networking":"networkingRevenue","security":"securityRevenue","collaboration":"collaborationRevenue","observability":"observabilityRevenue","services":"serviceRevenue","total product":"productRevenue"},
     GEV:{"power":"powerRevenue","electrification":"electrificationRevenue","wind":"windRevenue"},
+    PWR:{"electric":"electricRevenue","underground & infrastructure":"undergroundInfrastructureRevenue","underground and infrastructure":"undergroundInfrastructureRevenue"},
+    WMB:{"service revenues":"serviceRevenue","product sales":"productRevenue"},
     VRT:{"amer":"americasRevenue","americas":"americasRevenue","apac":"apacRevenue","emea":"emeaRevenue"}
    };
    if(extra[ticker]?.[value])return extra[ticker][value];
