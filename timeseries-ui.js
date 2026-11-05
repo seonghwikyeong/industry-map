@@ -435,7 +435,7 @@ async function load(force){
        const end=record.dates[i],source=(record.sources||[])[i]||record.source;
        const period=(record.periods||[])[i]||end.slice(0,4)+" Q"+Math.ceil(Number(end.slice(5,7))/3);
        return {end,period,value,source,kind:"reported",...(record.rounded?{note:"공식 발표 반올림 금액 (USD 0.1B 단위)"}:{})};
-      }).filter(p=>Number.isFinite(p.value)&&/^20\\d\\d-\\d\\d-\\d\\d$/.test(p.end)&&p.end<=new Date().toISOString().slice(0,10)&&/^https:\\/\\//.test(p.source||""));
+      }).filter(p=>Number.isFinite(p.value)&&p.end.length===10&&p.end[4]==="-"&&p.end[7]==="-"&&p.end<=new Date().toISOString().slice(0,10)&&String(p.source||"").startsWith("https://"));
       if(points.length)converted[key]={unit:key==="eps"?"USD/share":/Margin$/.test(key)?"%":"USD million",
           frequency:"quarterly",basis:record.rounded?"Official IR release (rounded reported values)":"Official IR/SEC quarterly disclosures",points};
      }
