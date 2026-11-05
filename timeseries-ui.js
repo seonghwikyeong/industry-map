@@ -339,7 +339,7 @@ function fvalue(v,unit){
  }
  return v.toLocaleString("en-US",{maximumFractionDigits:3});
 }
-function svgChart(points,unit){
+function svgChart(points,unit,frequency){
  const W=820,H=285,left=72,right=19,top=20,bottom=45,usableW=W-left-right,usableH=H-top-bottom;
  if(!points.length)return document.createTextNode("표시할 데이터가 없습니다.");
  const dates=points.map((p,i)=>Date.parse(p.end)||null);
@@ -352,7 +352,10 @@ function svgChart(points,unit){
  for(let j=0;j<=4;j++){const y=top+j*usableH/4;shape("line",{x1:left,y1:y,x2:W-right,y2:y});shape("text",{x:7,y:y+4},fvalue(high-j*(high-low)/4,unit))}
  for(let i=0;i<points.length-1;i++){
   const a=points[i],b=points[i+1],gap=Date.parse(b.end)-Date.parse(a.end);
-  if(validDates&&(gap<35*864e5||gap>125*864e5))continue;
+  const basis=String(frequency||"quarterly").toLowerCase();
+   const maxGap=basis==="daily"?7:basis==="monthly"||basis==="ttm"?50:
+                basis==="annual"?430:basis==="quarterly"?125:125;
+   if(validDates&&(gap<=0||gap>maxGap*864e5))continue;
   const line="M "+X(i)+" "+Y(a.value)+" L "+X(i+1)+" "+Y(b.value);
   shape("path",{d:line,class:"ts-line"});
  }
@@ -371,7 +374,7 @@ function render(){
  o.querySelector("#ts-subtitle").textContent=(d.series?.basis||"화면 표시값")+(d.series?.frequency?" · "+d.series.frequency:"")+" · "+existing.length+"개 데이터 포인트";
  if(d.key&&remoteGroup(d.key)&&!REMOTE[d.ticker]?.[d.key]&&existing.length<5){o.querySelector("#ts-subtitle").textContent+=" · 추가 공시 이력 조회 중 또는 미제공";}
  const content=o.querySelector("#ts-content");content.replaceChildren();
- const chartBox=document.createElement("div");chartBox.className="ts-chart-box";chartBox.appendChild(svgChart(existing,unit));content.appendChild(chartBox);
+ const chartBox=document.createElement("div");chartBox.className="ts-chart-box";chartBox.appendChild(svgChart(existing,unit,d.series?.frequency));content.appendChild(chartBox);
  const legend=document.createElement("div");legend.className="ts-legend";legend.textContent="단위: "+unit+" · 점에 마우스를 올리면 값 확인 · 공백 분기는 연결하지 않음";content.appendChild(legend);
  const table=document.createElement("table");table.className="ts-points";const head=document.createElement("thead");head.innerHTML="<tr><th>기간(종료일)</th><th>값</th><th>구분</th><th>출처</th></tr>";table.append(head);const body=document.createElement("tbody");
  existing.slice().reverse().forEach(p=>{let tr=document.createElement("tr");const cols=[p.period||p.end,fvalue(p.value,unit),p.kind==="derived"?"Derived":p.kind==="guidance"?"Guidance":p.kind==="snapshot"?"화면 스냅샷":"Reported"];cols.forEach(txt=>{let td=document.createElement("td");td.textContent=txt;tr.appendChild(td)});const src=document.createElement("td");if(p.source&&/^https:\/\//.test(p.source)){let a=document.createElement("a");a.href=p.source;a.target="_blank";a.rel="noopener noreferrer";a.textContent="원문 ↗";src.className="ts-source";src.appendChild(a)}else src.textContent="미확인";tr.append(src);body.append(tr)});table.append(body);content.appendChild(table);
