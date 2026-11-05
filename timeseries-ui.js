@@ -6,7 +6,7 @@
 "use strict";
 let DB={generated_at:null,companies:{}},loaded=false,loading=null,active=null;
 const PERIODS=window.AI_EARNINGS_PERIODS||{};
-const money=/^\s*[+\-−]?\s*\$?\s*\(?\d+(?:[,.]\d+)*(?:\.\d+)?\)?\s*(?:[KMBT]|%|x|X)?/;
+const money=/^\s*(?:약\s*)?[+\-−]?\s*(?:NT\$|₩|€|£|¥|\$)?\s*\(?\d+(?:[,.]\d+)*(?:\.\d+)?\)?\s*(?:[KMBT]|%|x|X)?/;
 const query=".company-panel b,.company-panel strong,.company-panel .product-amount,.company-panel .formula-box,.company-panel .metric-row > span,.company-panel .guidance-range-result,.company-panel .rel2-top > span,.company-panel .rel2-mid > span";
 const labels={
 "revenue":"revenue","매출":"revenue","total revenue":"revenue","net sales":"revenue","sales":"revenue",
@@ -157,7 +157,16 @@ const localized={
 "yoyGrowth":"매출 전년동기 성장률","azureRevenue":"Azure 매출"
 };
 const norm=s=>String(s||"").toLowerCase().replace(/\s+/g," ").trim();
-const num=s=>{let raw=String(s||"").replace(/,/g,"").replace(/−/g,"-");let m=raw.match(/([-+]?\s*\$?\s*\(?\d+(?:\.\d+)?\)?)(\s*[KMBT]|\s*%|\s*x)?/i);if(!m)return null;let n=Number(m[1].replace(/\s|\$|\(|\)/g,""));if(!Number.isFinite(n))return null;if(m[1].includes("("))n=-n;const suffix=(m[2]||"").trim().toUpperCase();if(suffix==="B")n*=1000;else if(suffix==="T")n*=1000000;else if(suffix==="K")n/=1000;return {value:n,unit:/%/.test(s)?"%":suffix==="X"?"multiple":/(\$|[MBT])/i.test(s)?"USD million":"number"}};
+const num=s=>{
+ const raw=String(s||"").trim().replace(/−/g,"-");
+ const m=raw.match(/^(?:약\s*)?([+-]?)\s*(NT\$|₩|€|£|¥|\$)?\s*\(?([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?|[0-9]+(?:\.[0-9]+)?)\)?\s*(T|B|M|K|%|x)?/i);
+ if(!m)return null;let n=Number(m[3].replace(/,/g,""));if(!Number.isFinite(n))return null;
+ if(m[1]==="-"||raw.includes("("+m[3]))n=-n;
+ const suffix=(m[4]||"").toUpperCase();if(suffix==="B")n*=1000;else if(suffix==="T")n*=1000000;else if(suffix==="K")n/=1000;
+ const unit=m[2]==="₩"?"KRW million":m[2]==="€"?"EUR million":m[2]==="NT$"?"TWD million":m[2]==="£"?"GBP million":m[2]==="¥"?"JPY million":
+   suffix==="%"?"%":suffix==="X"?"multiple":m[2]==="$"||/[MBT]/.test(suffix)?"USD million":"number";
+ return {value:n,unit};
+};
 function metricText(el){
  const row=el.closest(".metric-row"),head=el.closest(".drill-head");
  if(head)return head.querySelector("span")?.textContent.trim()||"부문별 값";
@@ -228,6 +237,7 @@ function viewData(el){
  let points=Array.isArray(series?.points)?series.points.filter(p=>typeof p.value==="number"&&Number.isFinite(p.value)&&p.end):[];
  if(series?.unit==="USD million"&&parsed.unit==="%"&&!["yoyGrowth","grossMargin","operatingMargin","netMargin"].includes(key))points=[];
  if(series?.unit==="USD million"&&parsed.unit==="multiple")points=[];
+ if(series?.unit&&parsed.unit&&/^(KRW|EUR|TWD|GBP|JPY) million$/.test(parsed.unit)&&series.unit!==parsed.unit)points=[];
  if(key==="eps"&&parsed.unit==="USD million")points=[];
  if(points.length===0)points=pointFallback(el,ticker,title,key,parsed);
  return {ticker,title,key,parsed,points,series,forecast,fallback:!series||!Array.isArray(series.points)||!series.points.length};
@@ -276,7 +286,18 @@ function overlay(){
  document.body.appendChild(o);document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});return o;
 }
 function close(){document.getElementById("financial-ts-overlay")?.classList.remove("ts-open")}
-function fvalue(v,unit){if(!Number.isFinite(v))return "-";if(unit==="USD million")return "$"+(Math.abs(v)>=1000?(v/1000).toLocaleString("en-US",{maximumFractionDigits:3})+"B":v.toLocaleString("en-US",{maximumFractionDigits:2})+"M");if(unit==="USD/share")return "$"+v.toFixed(2);if(unit==="%")return v.toFixed(2)+"%";if(unit==="multiple")return v.toFixed(2)+"x";return v.toLocaleString("en-US",{maximumFractionDigits:3})}
+function fvalue(v,unit){
+ if(!Number.isFinite(v))return "-";
+ if(unit==="USD/share")return "$"+v.toFixed(2);
+ if(unit==="%")return v.toFixed(2)+"%";
+ if(unit==="multiple")return v.toFixed(2)+"x";
+ const symbols={"USD million":"$","KRW million":"₩","EUR million":"€","TWD million":"NT$","GBP million":"£","JPY million":"¥"};
+ if(symbols[unit]){
+  const n=Math.abs(v),abs=n>=1e6?1e6:n>=1000?1000:1,suf=n>=1e6?"T":n>=1000?"B":"M";
+  return (v<0?"−":"")+symbols[unit]+(n/abs).toLocaleString("en-US",{maximumFractionDigits:3})+suf;
+ }
+ return v.toLocaleString("en-US",{maximumFractionDigits:3});
+}
 function svgChart(points,unit){
  const W=820,H=285,left=72,right=19,top=20,bottom=45,usableW=W-left-right,usableH=H-top-bottom;
  if(!points.length)return document.createTextNode("표시할 데이터가 없습니다.");
