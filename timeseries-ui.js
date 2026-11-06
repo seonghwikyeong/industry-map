@@ -563,10 +563,10 @@ function buildHistoryLists(scope){
    const val=latest.value;
    value.textContent=v.unit==="%"?val.toLocaleString("en-US")+"%":
      v.unit==="USD/share"||v.unit==="TWD/share"?String(val):
-     v.unit==="USD million"?"$"+val.toLocaleString("en-US")+"M":
-     v.unit==="TWD million"?"NT$"+val.toLocaleString("en-US")+"M":
-     v.unit==="KRW million"?"₩"+val.toLocaleString("en-US")+"M":
-     v.unit==="EUR million"?"€"+val.toLocaleString("en-US")+"M":
+     v.unit==="USD million"?(val<0?"-":"")+"$"+Math.abs(val).toLocaleString("en-US")+"M":
+     v.unit==="TWD million"?(val<0?"-":"")+"NT$"+Math.abs(val).toLocaleString("en-US")+"M":
+     v.unit==="KRW million"?(val<0?"-":"")+"₩"+Math.abs(val).toLocaleString("en-US")+"M":
+     v.unit==="EUR million"?(val<0?"-":"")+"€"+Math.abs(val).toLocaleString("en-US")+"M":
      val.toLocaleString("en-US");
    row.append(left,value);
    grid.append(row);
