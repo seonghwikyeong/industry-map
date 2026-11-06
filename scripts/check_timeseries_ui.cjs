@@ -96,15 +96,23 @@ async function main(){
      }
    }
  }
- assert.equal(additionalSeries,102);
- assert.equal(additionalPoints,259);
+ assert.equal(additionalSeries,105);
+ assert.equal(additionalPoints,271);
+ const anthPanel=panel("ANTH");
+ const explorer=anthPanel.querySelector(".ts-series-list");
+ assert.ok(explorer,"Anthropic N/A panel should show reported history explorer");
+ const anthRevenue=explorer.querySelector('[data-ts-key="revenue"]');
+ assert.ok(anthRevenue,"Anthropic revenue historical navigation");
+ const anthPopup=click(anthRevenue);
+ assert.ok(anthPopup.querySelectorAll("svg circle").length>=3,"Anthropic reported quarterly revenue history");
  for(const t of ["QUANTA","WISTRON","FOXCONN"]){
    assert.equal(extension.companies[t].monthlyRevenue.frequency,"monthly");
    assert.equal(extension.companies[t].monthlyRevenue.points.length,9);
+   assert.ok(extension.companies[t].quarterlyRevenue.points.length>=3,"missing 3-month derived quarter totals");
  }
  const monthlyNode=panel("QUANTA").querySelector(".latest-earnings .metric-row > b");
  if(monthlyNode){const pop=click(monthlyNode);assert.ok(pop.querySelectorAll("svg circle").length>=1,"Quanta click should render");}
- console.log("PASS V5.8: 18 additional issuer datasets, 102 metrics, 259 points");
+ console.log("PASS V5.8: 18 additional issuer datasets, 105 metrics, 271 points");
  let checked=0,noNumerics=0;for(const p of panels){const ticker=p.querySelector("h2 span")?.textContent.trim();assert.ok(ticker,"ticker");const numeric=[...p.querySelectorAll(".metric-row > b")].filter(x=>/^\s*[+\-−]?(?:NT\$|₩|€|£|¥|\$)?\s*\d/.test(x.textContent.trim()));const clickable=p.querySelector(".ts-clickable");if(numeric.length){assert.ok(clickable,"no clickable metric for "+ticker);checked++}else noNumerics++}
  console.log("PASS clickable historical-chart controls on "+checked+" numeric-company panels; "+noNumerics+" N/A-only panels exempt");
  w.close();
