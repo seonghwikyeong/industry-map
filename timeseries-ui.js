@@ -274,7 +274,7 @@ function metricKey(ticker,title,el){
  }
  // Exact company-level metrics in supplemental sources. No guessing of currency or accounting basis.
  if(["QUANTA","WISTRON","FOXCONN"].includes(ticker)&&
-     /^(?:매출|매출액|monthly sales|monthly revenue|total revenue|연결매출|연결 매출)$/.test(value))return "monthlyRevenue";
+     /^(?:매출|매출액|revenue|sales|total revenue|net sales|연결매출|연결 매출)$/.test(value))return "quarterlyRevenue";
  const companySpecial={
   MRVL:{"data center":"dataCenterRevenue","communications and other":"communicationsRevenue"},
   ASE:{"atm":"atmRevenue","ems":"emsRevenue","packaging":"packagingRevenue","testing":"testingRevenue"},
@@ -505,7 +505,7 @@ async function load(force){
   }catch(error){console.warn("V5.6 supplementary history unavailable",error)}
   // V5.8: fully sourced series with native monthly, instant, annual and quarterly frequencies.
   try{
-   const v58=await fetch("./timeseries-v58.json?v=58",{cache:"no-store"});
+   const v58=await fetch("./timeseries-v58.json?v=581",{cache:"no-store"});
    if(v58.ok){
     const payload=await v58.json();
     for(const [ticker,entries] of Object.entries(payload.companies||{})){
@@ -545,7 +545,7 @@ function buildHistoryLists(scope){
   const lang={
    revenue:"연결 매출",operatingIncome:"영업이익",netIncome:"순이익",grossProfit:"매출총이익",
    grossMargin:"매출총이익률",operatingMargin:"영업이익률",netMargin:"순이익률",eps:"희석 EPS",
-   monthlyRevenue:"월별 연결 매출",monthlyRevenuePriorYear:"전년도 월별 연결 매출",
+   monthlyRevenue:"월별 연결 매출",monthlyRevenuePriorYear:"전년도 월별 연결 매출",quarterlyRevenue:"월별 공시 합산 분기 매출",
    dataCenterRevenue:"데이터센터 매출",networkingRevenue:"네트워킹 매출",
    cloudAiRevenue:"클라우드·AI 매출",revenueBacklog:"계약 기반 매출 백로그",
    contractedPower:"계약 전력",activePower:"가동 전력",aiCloudRevenue:"AI 클라우드 매출",
