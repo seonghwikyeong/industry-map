@@ -1,4 +1,4 @@
-/* AI Industry Map V5.8 · extended source-backed company financial time-series charts.
+/* AI Industry Map V5.8.1 · extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -214,6 +214,7 @@ function metricText(el){
  return el.parentElement?.querySelector("span")?.textContent?.trim()||"수치";
 }
 function metricKey(ticker,title,el){
+ if(el?.dataset?.tsKey)return el.dataset.tsKey;
  const value=norm(title).replace(/\s*\([^)]*\)/g,"");
  const context=el.closest(".drill-body")?"segment":el.closest(".latest-earnings")?"latest":el.closest(".common-block")?"common":"other";
  /* V5.6: exact reported business-unit series; prevent conflating segment with consolidated results. */
@@ -396,6 +397,13 @@ function style(){
  ".ts-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap;padding:11px 20px;border-top:1px solid #315069;background:#112d3e}",
  ".ts-actions button{background:#20485d;border:1px solid #54849a;border-radius:6px;color:#e6f8ff;cursor:pointer;padding:8px 12px}",
  ".ts-legend{font-size:11px;color:#a5bacb;margin-top:7px}",
+ ".ts-series-list{margin:14px 0;border:1px solid #284b63;background:#0b2134;border-radius:10px;padding:11px;color:#d5f7fd}",
+ ".ts-series-list summary{cursor:pointer;font-size:12px;color:#72d8c4;font-weight:750}",
+ ".ts-series-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:7px;margin-top:11px}",
+ ".ts-history-row{display:flex;justify-content:space-between;gap:12px;padding:9px;background:#0f2a40;border-radius:7px;align-items:center}",
+ ".ts-history-row .mr-left{display:flex;flex-direction:column;gap:3px;font-size:11px}",
+ ".ts-history-row .mr-left small{font-size:10px;color:#8aaac3}",
+ ".ts-history-row b{font-size:12px;white-space:nowrap}",
  "@media(max-width:650px){.ts-content{padding:12px}.ts-top{padding:12px}.ts-points{font-size:11px}.ts-points td,.ts-points th{padding:6px 4px}}"
  ].join("\n");document.head.appendChild(s)
 }
@@ -512,7 +520,7 @@ async function load(force){
     }
    }
   }catch(error){console.warn("V5.8 supplemental history unavailable",error)}
-  loaded=true}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
+  loaded=true;buildHistoryLists(document);}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
  if(!el?.closest?.(".company-panel"))return false;
@@ -520,8 +528,56 @@ function eligible(el){
  const raw=el.textContent.trim();if(el.closest("h2,h3,h4,.badge,.news-entry,.src,summary .drill-caret"))return false;if(!money.test(raw))return false;
  return Boolean(num(raw));
 }
+function buildHistoryLists(scope){
+ // Accessible history explorer for N/A-only companies and company-specific metrics.
+ for(const panel of scope.querySelectorAll(".company-panel")){
+  const ticker=panel.querySelector("h2 span")?.textContent?.trim()?.toUpperCase();
+  const metrics=ticker&&DB.companies?.[ticker];
+  if(!metrics||panel.querySelector(".ts-series-list"))continue;
+  const entries=Object.entries(metrics).filter(([,v])=>Array.isArray(v?.points)&&v.points.length&&v.unit);
+  if(!entries.length)continue;
+  const details=document.createElement("details");
+  details.className="ts-series-list";
+  const sum=document.createElement("summary");
+  sum.textContent="📈 공시 시계열 목록 · "+entries.length+"개 지표";
+  details.append(sum);
+  const grid=document.createElement("div");grid.className="ts-series-grid";
+  const lang={
+   revenue:"연결 매출",operatingIncome:"영업이익",netIncome:"순이익",grossProfit:"매출총이익",
+   grossMargin:"매출총이익률",operatingMargin:"영업이익률",netMargin:"순이익률",eps:"희석 EPS",
+   monthlyRevenue:"월별 연결 매출",monthlyRevenuePriorYear:"전년도 월별 연결 매출",
+   dataCenterRevenue:"데이터센터 매출",networkingRevenue:"네트워킹 매출",
+   cloudAiRevenue:"클라우드·AI 매출",revenueBacklog:"계약 기반 매출 백로그",
+   contractedPower:"계약 전력",activePower:"가동 전력",aiCloudRevenue:"AI 클라우드 매출",
+   annualRevenue:"연간 매출",computeInfrastructureExpense:"컴퓨팅·인프라 비용"
+  };
+  for(const [key,v] of entries){
+   const latest=[...v.points].filter(p=>p?.end&&Number.isFinite(p.value)).sort((a,b)=>a.end.localeCompare(b.end)).at(-1);
+   if(!latest)continue;
+   const row=document.createElement("div");row.className="metric-row ts-history-row";
+   const left=document.createElement("div");left.className="mr-left";
+   const name=document.createElement("span");name.textContent=lang[key]||key.replace(/([A-Z])/g," $1").trim();
+   const period=document.createElement("small");period.textContent=latest.period||latest.end;
+   left.append(name,period);
+   const value=document.createElement("b");value.dataset.tsKey=key;
+   const val=latest.value;
+   value.textContent=v.unit==="%"?val.toLocaleString("en-US")+"%":
+     v.unit==="USD/share"||v.unit==="TWD/share"?String(val):
+     v.unit==="USD million"?"$"+val.toLocaleString("en-US")+"M":
+     v.unit==="TWD million"?"NT$"+val.toLocaleString("en-US")+"M":
+     v.unit==="KRW million"?"₩"+val.toLocaleString("en-US")+"M":
+     v.unit==="EUR million"?"€"+val.toLocaleString("en-US")+"M":
+     val.toLocaleString("en-US");
+   row.append(left,value);
+   grid.append(row);
+  }
+  details.append(grid);
+  panel.append(details);
+ }
+}
 function init(root){
  const scope=root||document;
+ if(loaded)buildHistoryLists(scope);
  scope.querySelectorAll(query).forEach(el=>{if(eligible(el)){el.classList.add("ts-clickable");el.setAttribute("tabindex","0");el.setAttribute("role","button");el.setAttribute("aria-label","시계열 그래프 보기: "+metricText(el));}});
 }
 function main(){
