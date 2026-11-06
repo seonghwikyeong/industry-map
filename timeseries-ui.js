@@ -1,4 +1,4 @@
-/* AI Industry Map V5.7 · extended source-backed company financial time-series charts.
+/* AI Industry Map V5.8 · extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -228,6 +228,15 @@ function metricKey(ticker,title,el){
   const prefix=segments[ticker]?.[value];
   if(prefix)return prefix+(operating?"OperatingIncome":"Revenue");
   if(!operating){
+   const seriesSegment={
+     MRVL:{"data center":"dataCenterRevenue","communications and other":"communicationsRevenue"},
+     ASE:{"atm":"atmRevenue","ems":"emsRevenue","packaging":"packagingRevenue","testing":"testingRevenue"},
+     HPE:{"networking":"networkingRevenue","cloud & ai":"cloudAiRevenue","server":"serverRevenue","storage":"storageRevenue","data center networking":"dataCenterNetworkingRevenue"},
+     ETN:{"electrical americas":"electricalAmericasRevenue","electrical global":"electricalGlobalRevenue"},
+     CARR:{"climate solutions americas":"americasRevenue","climate solutions europe":"europeRevenue","climate solutions asia pacific, middle east & africa":"asiaRevenue","climate solutions transportation":"transportationRevenue"},
+     TT:{"americas":"americasRevenue","emea":"emeaRevenue"}
+   };
+   if(seriesSegment[ticker]?.[value])return seriesSegment[ticker][value];
    const extra={
     AVGO:{"semiconductor solutions":"semiconductorRevenue","infrastructure software":"infrastructureSoftwareRevenue"},
     ORCL:{"cloud":"cloudRevenue","cloud infrastructure":"cloudInfrastructureRevenue","cloud applications":"cloudApplicationsRevenue"},
@@ -262,6 +271,25 @@ function metricKey(ticker,title,el){
    }
   }
  }
+ // Exact company-level metrics in supplemental sources. No guessing of currency or accounting basis.
+ if(["QUANTA","WISTRON","FOXCONN"].includes(ticker)&&
+     /^(?:매출|매출액|monthly sales|monthly revenue|total revenue|연결매출|연결 매출)$/.test(value))return "monthlyRevenue";
+ const companySpecial={
+  MRVL:{"data center":"dataCenterRevenue","communications and other":"communicationsRevenue"},
+  ASE:{"atm":"atmRevenue","ems":"emsRevenue","packaging":"packagingRevenue","testing":"testingRevenue"},
+  HPE:{"networking":"networkingRevenue","cloud & ai":"cloudAiRevenue","server":"serverRevenue","storage":"storageRevenue","data center networking":"dataCenterNetworkingRevenue","routing":"routingRevenue","campus & branch":"campusBranchRevenue"},
+  ETN:{"electrical americas":"electricalAmericasRevenue","electrical global":"electricalGlobalRevenue"},
+  CARR:{"climate solutions americas":"americasRevenue","climate solutions europe":"europeRevenue","climate solutions asia pacific, middle east & africa":"asiaRevenue","climate solutions transportation":"transportationRevenue"},
+  TT:{"americas":"americasRevenue","emea":"emeaRevenue","bookings":"bookings","orders":"bookings"},
+  CRWV:{"revenue backlog":"revenueBacklog","backlog":"revenueBacklog","active power":"activePower","contracted power":"contractedPower"},
+  IREN:{"ai cloud services":"aiCloudRevenue","ai cloud services revenue":"aiCloudRevenue","bitcoin mining":"bitcoinMiningRevenue","bitcoin mining revenue":"bitcoinMiningRevenue"},
+  ANTH:{"compute and infrastructure":"computeInfrastructureExpense","compute and infrastructure expense":"computeInfrastructureExpense"}
+ };
+ if(companySpecial[ticker]?.[value])return companySpecial[ticker][value];
+ if(/adjusted ebitda/i.test(value))return "adjustedEbitda";
+ if(/adjusted eps|adjusted earnings per share/i.test(value))return "adjustedEps";
+ if(ticker==="MRVL"&&/data center|데이터센터/i.test(value))return "dataCenterRevenue";
+ if(ticker==="HPE"&&/cloud & ai/i.test(value))return "cloudAiRevenue";
  const businessMetrics={
   AMZN:{"aws":"awsRevenue","aws net sales":"awsRevenue","advertising":"advertisingRevenue","advertising services":"advertisingRevenue","subscription services":"subscriptionRevenue"},
   GOOGL:{"google cloud":"googleCloudRevenue","google services":"googleServicesRevenue"},
@@ -467,6 +495,23 @@ async function load(force){
     }
    }
   }catch(error){console.warn("V5.6 supplementary history unavailable",error)}
+  // V5.8: fully sourced series with native monthly, instant, annual and quarterly frequencies.
+  try{
+   const v58=await fetch("./timeseries-v58.json?v=58",{cache:"no-store"});
+   if(v58.ok){
+    const payload=await v58.json();
+    for(const [ticker,entries] of Object.entries(payload.companies||{})){
+     if(!DB.companies[ticker])DB.companies[ticker]={};
+     for(const [metric,series] of Object.entries(entries)){
+      if(!series||!Array.isArray(series.points)||!series.unit)continue;
+      const points=series.points.filter(p=>p&&typeof p.value==="number"&&Number.isFinite(p.value)&&
+       /^20\d{2}-\d{2}-\d{2}$/.test(p.end)&&p.end<=new Date().toISOString().slice(0,10)&&
+       String(p.source||"").startsWith("https://")).sort((a,b)=>a.end.localeCompare(b.end));
+      if(points.length)DB.companies[ticker][metric]={...series,points};
+     }
+    }
+   }
+  }catch(error){console.warn("V5.8 supplemental history unavailable",error)}
   loaded=true}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
