@@ -505,7 +505,7 @@ async function load(force){
   }catch(error){console.warn("V5.6 supplementary history unavailable",error)}
   // V5.8: fully sourced series with native monthly, instant, annual and quarterly frequencies.
   try{
-   const v58=await fetch("./timeseries-v58.json?v=581",{cache:"no-store"});
+   const v58=await fetch("./timeseries-v58.json?v=582",{cache:"no-store"});
    if(v58.ok){
     const payload=await v58.json();
     for(const [ticker,entries] of Object.entries(payload.companies||{})){
@@ -549,7 +549,7 @@ function buildHistoryLists(scope){
    dataCenterRevenue:"데이터센터 매출",networkingRevenue:"네트워킹 매출",
    cloudAiRevenue:"클라우드·AI 매출",revenueBacklog:"계약 기반 매출 백로그",
    contractedPower:"계약 전력",activePower:"가동 전력",aiCloudRevenue:"AI 클라우드 매출",
-   annualRevenue:"연간 매출",computeInfrastructureExpense:"컴퓨팅·인프라 비용"
+   annualRevenue:"연간 매출",computeInfrastructureExpense:"컴퓨팅·인프라 비용",personnelExpense:"인건비",salesMarketingPartnershipExpense:"판매·마케팅·파트너십 비용",operatingExpense:"영업비용 합계",adjustedOperatingIncome:"조정 영업이익 (Non-GAAP)"
   };
   for(const [key,v] of entries){
    const latest=[...v.points].filter(p=>p?.end&&Number.isFinite(p.value)).sort((a,b)=>a.end.localeCompare(b.end)).at(-1);
