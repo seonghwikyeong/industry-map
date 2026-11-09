@@ -18,7 +18,7 @@ TODAY = dt.date.today()
 START = dt.date(TODAY.year - 5, TODAY.month, 1)
 TICKERS = {"2330": "TSM", "3711": "ASE", "2382": "QUANTA",
            "3231": "WISTRON", "2317": "FOXCONN"}
-HEADERS = {"User-Agent": "AI Industry Map financial research (https://github.com/seonghwikyeong/industry-map/issues)",
+HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; AIIndustryMap/5.9; https://github.com/seonghwikyeong/industry-map)",
            "Accept": "text/html"}
 MOPS = "https://mopsov.twse.com.tw/nas/t21/sii/t21sc03_{}_{}_0.html"
 
@@ -73,8 +73,8 @@ def parse_revenue(table, ticker):
     parser = TableRows()
     parser.feed(table)
     for row in parser.rows:
-        code = row[0].strip().replace(" ", "")
-        if code != ticker:
+        code = row[0].strip().replace("\u3000", " ")
+        if not re.match(r"^" + re.escape(ticker) + r"(?:\\s|$)", code):
             continue
         raw = row[2].replace(",", "").replace(" ", "").replace("\u3000", "")
         raw = re.sub(r"\([^)]*\)", "", raw) if raw.endswith("%") else raw
@@ -103,13 +103,17 @@ def main():
         url = MOPS.format(year - 1911, month)
         try:
             data = fetch(url)
+            found = 0
             for code, ticker in TICKERS.items():
                 value = parse_revenue(data, code)
                 if value is not None:
+                    found += 1
                     histories[ticker].append({
                         "end": end.isoformat(), "period": f"{year}-{month:02}",
                         "value": round(value, 6), "kind": "reported", "source": url
                     })
+            if found == 0:
+                errors.append(f"{year}-{month:02}: HTML retrieved but 0 target tickers parsed")
         except Exception as exc:
             errors.append(f"{year}-{month:02}: {exc}")
         time.sleep(.24)
