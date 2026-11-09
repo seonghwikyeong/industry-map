@@ -44,8 +44,23 @@ CONCEPTS = {
     "liabilities": ["Liabilities"],
     "equity": ["StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"],
     "inventory": ["InventoryNet"],
+    "costOfRevenue": ["CostOfRevenue", "CostOfGoodsAndServicesSold"],
+    "operatingExpenses": ["OperatingExpenses"],
+    "sellingGeneralAdministrative": ["SellingGeneralAndAdministrativeExpense"],
+    "interestExpense": ["InterestExpense", "InterestExpenseNonoperating"],
+    "investingCashFlow": ["NetCashProvidedByUsedInInvestingActivities"],
+    "financingCashFlow": ["NetCashProvidedByUsedInFinancingActivities"],
+    "depreciationAmortization": ["DepreciationDepletionAndAmortization", "DepreciationAndAmortization"],
+    "dividendsPaid": ["PaymentsOfDividends", "PaymentsOfDividendsCommonStock"],
+    "shareRepurchases": ["PaymentsForRepurchaseOfCommonStock"],
+    "accountsReceivable": ["AccountsReceivableNetCurrent", "ReceivablesNetCurrent"],
+    "currentAssets": ["AssetsCurrent"],
+    "currentLiabilities": ["LiabilitiesCurrent"],
+    "longTermDebt": ["LongTermDebtNoncurrent", "LongTermDebt"],
+    "shortTermDebt": ["ShortTermBorrowings", "DebtCurrent"],
+    "retainedEarnings": ["RetainedEarningsAccumulatedDeficit"],
 }
-INSTANT_KEYS = {"cash", "assets", "liabilities", "equity", "inventory"}
+INSTANT_KEYS = {"cash", "assets", "liabilities", "equity", "inventory", "accountsReceivable", "currentAssets", "currentLiabilities", "longTermDebt", "shortTermDebt", "retainedEarnings"}
 UNIT = {"eps": "USD/share"}
 TIMEOUT = 28
 
@@ -198,6 +213,42 @@ def company_series(doc, cik):
             "basis": "SEC EDGAR companyfacts: 10-Q / 10-K, per-filing provenance",
             "points": points,
         }
+    # GAAP identities are permitted, but are labelled Derived with same-period provenance.
+    if "grossProfit" not in result and "revenue" in result and "costOfRevenue" in result:
+        a = {p["end"]: p for p in result["revenue"]["points"]}
+        out = []
+        for p in result["costOfRevenue"]["points"]:
+            if p["end"] in a:
+                out.append({**p, "value": round(a[p["end"]]["value"] - p["value"], 6),
+                            "kind": "derived", "note": "Revenue minus cost of revenue, SEC XBRL same quarter"})
+        if len(out) >= 2:
+            result["grossProfit"] = {"unit": "USD million", "frequency": "quarterly",
+                                     "basis": "Derived from SEC XBRL reported GAAP values", "points": out}
+    if "liabilities" not in result and "assets" in result and "equity" in result:
+        a = {p["end"]: p for p in result["assets"]["points"]}
+        out = []
+        for p in result["equity"]["points"]:
+            if p["end"] in a:
+                out.append({**p, "value": round(a[p["end"]]["value"] - p["value"], 6),
+                            "kind": "derived", "note": "Assets minus equity, SEC XBRL same balance-sheet date"})
+        if len(out) >= 2:
+            result["liabilities"] = {"unit": "USD million", "frequency": "quarterly instant",
+                                      "basis": "Derived from SEC XBRL balance-sheet identity", "points": out}
+    if "revenue" in result:
+        points = sorted(result["revenue"]["points"], key=lambda p: p["end"])
+        out = []
+        for p in points:
+            here = dt.date.fromisoformat(p["end"])
+            previous = [(abs((here - dt.date.fromisoformat(q["end"])).days - 365), q)
+                        for q in points if 330 <= (here - dt.date.fromisoformat(q["end"])).days <= 400]
+            if previous:
+                old = min(previous, key=lambda x: x[0])[1]
+                if old["value"] != 0:
+                    out.append({**p, "value": round((p["value"] / old["value"] - 1) * 100, 5),
+                                "kind": "derived", "note": "SEC XBRL quarterly revenue year-on-year growth"})
+        if len(out) >= 2:
+            result["yoyGrowth"] = {"unit": "%", "frequency": "quarterly",
+                                   "basis": "Derived from SEC XBRL same-quarter YoY revenue", "points": out}
     # Financial ratios derived only from same-date, same-basis USD amounts.
     revenue = {p["end"]: p for p in result.get("revenue", {}).get("points", [])}
     for numerator, output in (("grossProfit", "grossMargin"), ("operatingIncome", "operatingMargin"), ("netIncome", "netMargin")):
