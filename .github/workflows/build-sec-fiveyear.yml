@@ -1,0 +1,58 @@
+name: Build five-year SEC filing history
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 8 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_sec_fiveyear.py'
+      - '.github/workflows/build-sec-fiveyear.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sec-fiveyear-history
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch five years of SEC EDGAR quarterly financials
+        run: python scripts/build_sec_fiveyear.py
+      - name: Validate generated history
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          doc=json.loads(Path('timeseries-sec5y.json').read_text())
+          companies=doc.get('companies',{})
+          assert companies, 'No companies fetched'
+          points=sum(len(s['points']) for data in companies.values() for s in data.values())
+          assert points>=100, f'Unexpectedly few SEC points: {points}'
+          print(f'SEC company histories: {len(companies)}, quarterly points: {points}')
+          with open('sec-fiveyear-report.txt','w') as f:
+              f.write(f'Companies: {len(companies)}\nMetrics: {sum(map(len,companies.values()))}\nPoints: {points}\n')
+          PY
+      - name: Upload coverage report to job summary
+        if: success()
+        run: cat sec-fiveyear-report.txt >> "$GITHUB_STEP_SUMMARY"
+      - name: Commit refreshed SEC historical file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add timeseries-sec5y.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Refresh five-year SEC filing time series from latest public EDGAR facts"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
