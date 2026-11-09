@@ -8,7 +8,9 @@ spec = importlib.util.spec_from_file_location("sec_fiveyear", PATH)
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 
-def fact(start, end, val, form="10-Q", filed="2026-01-31"):
+def fact(start, end, val, form="10-Q", filed=None):
+    from datetime import date, timedelta
+    filed = filed or min(date.fromisoformat(end) + timedelta(days=40), m.AS_OF).isoformat()
     d = {"end": end, "val": val, "form": form, "filed": filed,
          "accn": "0000000000-26-000001"}
     if start:
