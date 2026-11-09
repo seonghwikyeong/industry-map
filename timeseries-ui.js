@@ -374,7 +374,7 @@ function viewData(el){
  if(series?.unit==="USD million"&&parsed.unit==="%"&&!["yoyGrowth","grossMargin","operatingMargin","netMargin"].includes(key))points=[];
  if(series?.unit==="USD million"&&parsed.unit==="multiple")points=[];
  if(series?.unit&&parsed.unit&&/^(KRW|EUR|TWD|GBP|JPY) million$/.test(parsed.unit)&&series.unit!==parsed.unit)points=[];
- if(key==="eps"&&parsed.unit==="USD million")points=[];
+ if(key==="eps"&&/\d\s*[MBT]\b/i.test(el.textContent))points=[]; // $ notation alone is valid for USD/share
  if(points.length===0)points=pointFallback(el,ticker,title,key,parsed);
  return {ticker,title,key,parsed,points,series,forecast,fallback:!series||!Array.isArray(series.points)||!series.points.length};
 }
