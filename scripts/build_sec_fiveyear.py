@@ -92,7 +92,7 @@ def usable(items, unit, instant):
             continue
         end = dated(item.get("end"))
         filed = dated(item.get("filed"))
-        if not end or not filed or end > AS_OF or filed > AS_OF or end < START - dt.timedelta(days=420):
+        if not end or not filed or end > AS_OF or filed > AS_OF or filed < end or end < START - dt.timedelta(days=420):
             continue
         start = dated(item.get("start"))
         duration = (end - start).days + 1 if start else 0
