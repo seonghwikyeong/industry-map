@@ -536,6 +536,22 @@ async function load(force){
     }
    }
   }catch(error){console.warn("V5.8 supplemental history unavailable",error)}
+  // Source-linked 20-quarter consolidated revenue for AMZN, GOOGL and META.
+  // Keeps existing company-specific segment figures. SEC backfill takes priority later.
+  try{
+   const bootstrap=await fetch("./timeseries-bootstrap5y.json?v=59",{cache:"no-store"});
+   if(bootstrap.ok){
+    const payload=await bootstrap.json();
+    for(const [ticker,metrics] of Object.entries(payload.companies||{})){
+     if(!DB.companies[ticker])DB.companies[ticker]={};
+     for(const [key,series] of Object.entries(metrics||{})){
+      if(!Array.isArray(series.points)||series.points.length<2)continue;
+      const verified=trimFiveYears(series.points.filter(p=>Number.isFinite(p.value)&&String(p.source||"").startsWith("https://")));
+      if(verified.length>=2)DB.companies[ticker][key]={...series,points:verified};
+     }
+    }
+   }
+  }catch(error){console.warn("20-quarter revenue bootstrap unavailable",error)}
   // SEC EDGAR 5-year XBRL cache is authoritative for US GAAP consolidated metrics.
   // Company-specific IR/segment series are retained untouched when the SEC has no matching concept.
   try{
