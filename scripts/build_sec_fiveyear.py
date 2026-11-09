@@ -19,7 +19,6 @@ ENDPOINT = "https://data.sec.gov/api/xbrl/companyfacts/CIK{:010d}.json"
 HEADERS = {
     "User-Agent": "AI Industry Map Research Bot (https://github.com/seonghwikyeong/industry-map/issues)",
     "Accept": "application/json",
-    "Accept-Encoding": "gzip, deflate",
 }
 # Publicly listed issuers; the SEC listing is still consulted for each CIK.
 TICKERS = (
