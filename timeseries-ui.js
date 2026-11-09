@@ -561,6 +561,21 @@ async function load(force){
     }
    }
   }catch(error){console.warn("Five-year SEC EDGAR cache unavailable",error)}
+  // TWSE five-year backfill takes precedence over shorter Taiwan monthly snapshots.
+  try{
+   const twseRes=await fetch("./timeseries-twse5y.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});
+   if(twseRes.ok){
+    const twse=await twseRes.json();
+    for(const [ticker,metrics] of Object.entries(twse.companies||{})){
+     if(!DB.companies[ticker])DB.companies[ticker]={};
+     for(const [key,s] of Object.entries(metrics||{})){
+      if(!s||s.unit!=="TWD million"||!Array.isArray(s.points))continue;
+      const pts=trimFiveYears(s.points.filter(p=>Number.isFinite(p.value)&&String(p.source||"").startsWith("https://")));
+      if(pts.length>=2)DB.companies[ticker][key]={...s,points:pts};
+     }
+    }
+   }
+  }catch(error){console.warn("Five-year Taiwan MOPS cache unavailable",error)}
   loaded=true;buildHistoryLists(document);}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
@@ -580,7 +595,7 @@ function buildHistoryLists(scope){
   const details=document.createElement("details");
   details.className="ts-series-list";
   const sum=document.createElement("summary");
-  sum.textContent="📈 최근 5년 시계열 · "+entries.length+"개 지표";
+  sum.textContent="📈 최근 5년 시계열 · "+entries.length+"개 지표 (분기·월별)";
   details.append(sum);
   const grid=document.createElement("div");grid.className="ts-series-grid";
   const lang={
