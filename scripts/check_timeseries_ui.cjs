@@ -10,15 +10,16 @@ async function main(){
  const history=JSON.parse(fs.readFileSync(path.join(repo,"timeseries.json"),"utf8"));
  const supplement=JSON.parse(fs.readFileSync(path.join(repo,"timeseries-v56.json"),"utf8"));
  const extension=JSON.parse(fs.readFileSync(path.join(repo,"timeseries-v58.json"),"utf8"));
+ const secFiveYear=JSON.parse(fs.readFileSync(path.join(repo,"timeseries-sec5y.json"),"utf8"));
  const bootstrap=JSON.parse(fs.readFileSync(path.join(repo,"timeseries-bootstrap5y.json"),"utf8"));
  const js=fs.readFileSync(path.join(repo,"timeseries-ui.js"),"utf8");
  const period=fs.readFileSync(path.join(repo,"earnings-periods.js"),"utf8");
  const dom=new JSDOM(html,{url:"https://seonghwikyeong.github.io/industry-map/",runScripts:"outside-only",pretendToBeVisual:true});
  const w=dom.window;
- w.fetch=async url=>({ok:true,status:200,json:async()=>String(url).includes("timeseries-bootstrap5y.json")?bootstrap:String(url).includes("timeseries-v58.json")?extension:String(url).includes("timeseries-v56.json")?supplement:String(url).includes("timeseries.json")?history:{symbol:"MSFT",currency:"USD",rows:[]}});
+ w.fetch=async url=>({ok:true,status:200,json:async()=>String(url).includes("timeseries-sec5y.json")?secFiveYear:String(url).includes("timeseries-bootstrap5y.json")?bootstrap:String(url).includes("timeseries-v58.json")?extension:String(url).includes("timeseries-v56.json")?supplement:String(url).includes("timeseries.json")?history:{symbol:"MSFT",currency:"USD",rows:[]}});
  w.eval(period);
  w.eval(js);
- await new Promise(resolve=>setTimeout(resolve,150));
+ await new Promise(resolve=>setTimeout(resolve,950));
  const panels=w.document.querySelectorAll(".company-panel");
  assert.equal(panels.length,47);
  const panel=ticker=>[...panels].find(p=>p.querySelector("h2 span")?.textContent.trim()===ticker);
@@ -29,12 +30,20 @@ async function main(){
   assert.equal(modal?.classList.contains("ts-open"),true,"click opens graph modal");
   return modal;
  }
+ assert.ok(Object.keys(secFiveYear.companies).length>=30,"SEC 5yr datasource missing 30+ issuers");
  const msft=panel("MSFT");
  assert.ok(msft);
  const topRevenue=msft.querySelector(".latest-earnings .metric-row > b");
  let modal=click(topRevenue);
  assert.ok(modal.querySelectorAll("svg circle").length>=20,"Microsoft five-year revenue should have 20 quarters");
- console.log("PASS Microsoft total revenue: 20 reported quarters");
+ console.log("PASS Microsoft total revenue: 20+ reported quarters");
+ for(const ticker of ["NVDA","AMZN","GOOGL","META","AMD","AVGO","INTC","MU","CSCO"]){
+   const p=panel(ticker);
+   assert.ok(p,"missing panel "+ticker);
+   const sec=secFiveYear.companies[ticker]?.revenue?.points||[];
+   assert.ok(sec.length>=16,ticker+" should have >=16 sourced SEC revenue quarters, got "+sec.length);
+ }
+ console.log("PASS 35-company SEC cache loaded, 9 major revenue series have 16+ quarters");
  const azure=[...msft.querySelectorAll(".latest-earnings .metric-row")].find(x=>x.textContent.includes("Azure 매출"));
  modal=click(azure.querySelector("b"));
  assert.ok(modal.querySelectorAll("svg circle").length>=9,"Azure history >=9 quarters");
