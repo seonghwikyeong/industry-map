@@ -1,0 +1,49 @@
+name: Backfill five-year Taiwan monthly revenue
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '45 3 12 * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_twse_fiveyear.py'
+      - '.github/workflows/build-twse-fiveyear.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: twse-fiveyear-history
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch TWSE MOPS 5-year monthly revenue records
+        run: python scripts/build_twse_fiveyear.py
+      - name: Verify five-year TWSE backfill output
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('timeseries-twse5y.json').read_text())
+          n=sum(len(v['monthlyRevenue']['points']) for v in d['companies'].values())
+          assert n>=80, f'Expected >=80 monthly points, got {n}'
+          print('Official MOPS monthly points:',n,'Companies:',len(d['companies']))
+          PY
+      - name: Commit source-linked historical results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add timeseries-twse5y.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Refresh five-year TWSE MOPS company monthly revenues"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
