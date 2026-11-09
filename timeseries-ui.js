@@ -1,4 +1,4 @@
-/* AI Industry Map V5.8.1 · extended source-backed company financial time-series charts.
+/* AI Industry Map V5.9 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -6,6 +6,17 @@
 "use strict";
 let DB={generated_at:null,companies:{}},loaded=false,loading=null,active=null;
 const PERIODS=window.AI_EARNINGS_PERIODS||{};
+const MAX_YEARS=5;
+function fiveYearCutoff(){
+ const today=new Date();
+ const x=new Date(Date.UTC(today.getUTCFullYear()-MAX_YEARS,today.getUTCMonth(),today.getUTCDate()));
+ return x.toISOString().slice(0,10);
+}
+function trimFiveYears(points){
+ const cutoff=fiveYearCutoff();
+ return (points||[]).filter(p=>p&&typeof p.end==="string"&&p.end>=cutoff&&p.end<=new Date().toISOString().slice(0,10))
+   .sort((a,b)=>a.end.localeCompare(b.end));
+}
 const money=/^\s*(?:약\s*)?[+\-−]?\s*(?:NT\$|₩|€|£|¥|\$)?\s*\(?\d+(?:[,.]\d+)*(?:\.\d+)?\)?\s*(?:[KMBT]|%|x|X)?/;
 const query=".company-panel b,.company-panel strong,.company-panel .product-amount,.company-panel .formula-box,.company-panel .metric-row > span,.company-panel .guidance-range-result,.company-panel .rel2-top > span,.company-panel .rel2-mid > span";
 const labels={
@@ -163,8 +174,8 @@ async function requestRemote(ticker,key){
  const identifier=ticker+"|"+(slug||group);
  if(remoteCalls.has(identifier))return remoteCalls.get(identifier);
  const promise=(async()=>{
-  const url=slug?"https://tgmcharts.com/api/v1/series/"+encodeURIComponent(ticker)+"/"+slug+"?years=10":
-        "https://tgmcharts.com/api/v1/statements/"+encodeURIComponent(ticker)+"/"+group+"?period=quarterly&years=8";
+  const url=slug?"https://tgmcharts.com/api/v1/series/"+encodeURIComponent(ticker)+"/"+slug+"?years=5":
+        "https://tgmcharts.com/api/v1/statements/"+encodeURIComponent(ticker)+"/"+group+"?period=quarterly&years=5";
   try{
     const response=await fetch(url,{headers:{Accept:"application/json"}});
     if(!response.ok&&!group)throw Error(String(response.status));
@@ -176,7 +187,7 @@ async function requestRemote(ticker,key){
       // Use the documented point-level series endpoint for that exact metric.
       if(!REMOTE[ticker]?.[key]?.points?.length&&SERIES_SLUGS[key]){
         const secondary=SERIES_SLUGS[key];
-        const fallbackResponse=await fetch("https://tgmcharts.com/api/v1/series/"+encodeURIComponent(ticker)+"/"+secondary+"?years=10",
+        const fallbackResponse=await fetch("https://tgmcharts.com/api/v1/series/"+encodeURIComponent(ticker)+"/"+secondary+"?years=5",
           {headers:{Accept:"application/json"}});
         if(fallbackResponse.ok)storeMetricSeries(ticker,key,await fallbackResponse.json(),secondary);
       }
@@ -359,7 +370,7 @@ function viewData(el){
            basis:remote.basis+" + "+local.basis,
            points:[...joined.values()].sort((a,b)=>String(a.end).localeCompare(String(b.end)))};
  }else if(remote?.points?.length>(local?.points?.length||0)&&(!local?.points?.length||local?.unit===remote?.unit))series=remote;
- let points=Array.isArray(series?.points)?series.points.filter(p=>typeof p.value==="number"&&Number.isFinite(p.value)&&p.end):[];
+ let points=Array.isArray(series?.points)?trimFiveYears(series.points.filter(p=>typeof p.value==="number"&&Number.isFinite(p.value)&&p.end)):[];
  if(series?.unit==="USD million"&&parsed.unit==="%"&&!["yoyGrowth","grossMargin","operatingMargin","netMargin"].includes(key))points=[];
  if(series?.unit==="USD million"&&parsed.unit==="multiple")points=[];
  if(series?.unit&&parsed.unit&&/^(KRW|EUR|TWD|GBP|JPY) million$/.test(parsed.unit)&&series.unit!==parsed.unit)points=[];
@@ -403,6 +414,7 @@ function style(){
  ".ts-history-row{display:flex;justify-content:space-between;gap:12px;padding:9px;background:#0f2a40;border-radius:7px;align-items:center}",
  ".ts-history-row .mr-left{display:flex;flex-direction:column;gap:3px;font-size:11px}",
  ".ts-history-row .mr-left small{font-size:10px;color:#8aaac3}",
+ ".ts-history-row .ts-count{color:#72d8c4;font-weight:600}",
  ".ts-history-row b{font-size:12px;white-space:nowrap}",
  "@media(max-width:650px){.ts-content{padding:12px}.ts-top{padding:12px}.ts-points{font-size:11px}.ts-points td,.ts-points th{padding:6px 4px}}"
  ].join("\n");document.head.appendChild(s)
@@ -463,7 +475,11 @@ function render(){
  const unit=d.series?.unit||unitFor(d.key,d.parsed);
  o.querySelector("#ts-title").textContent=d.ticker+" · "+d.title;
  o.querySelector("#ts-subtitle").textContent=(d.series?.basis||"화면 표시값")+(d.series?.frequency?" · "+d.series.frequency:"")+" · "+existing.length+"개 데이터 포인트";
- if(d.key&&remoteGroup(d.key)&&!REMOTE[d.ticker]?.[d.key]&&existing.length<5){o.querySelector("#ts-subtitle").textContent+=" · 추가 공시 이력 조회 중 또는 미제공";}
+ if(d.series?.frequency==="quarterly"){
+  o.querySelector("#ts-subtitle").textContent+=" · 최근 5년 최대 20개 분기 기준";
+  if(existing.length<16)o.querySelector("#ts-subtitle").textContent+=" · 공시 확보 "+existing.length+"개 분기";
+ }
+ if(d.key&&remoteGroup(d.key)&&!REMOTE[d.ticker]?.[d.key]&&existing.length<5){o.querySelector("#ts-subtitle").textContent+=" · 외부 공시 추가 조회 중/미제공";}
  const content=o.querySelector("#ts-content");content.replaceChildren();
  const chartBox=document.createElement("div");chartBox.className="ts-chart-box";chartBox.appendChild(svgChart(existing,unit,d.series?.frequency));content.appendChild(chartBox);
  const legend=document.createElement("div");legend.className="ts-legend";legend.textContent="단위: "+unit+" · 점에 마우스를 올리면 값 확인 · 공백 분기는 연결하지 않음";content.appendChild(legend);
@@ -520,6 +536,31 @@ async function load(force){
     }
    }
   }catch(error){console.warn("V5.8 supplemental history unavailable",error)}
+  // SEC EDGAR 5-year XBRL cache is authoritative for US GAAP consolidated metrics.
+  // Company-specific IR/segment series are retained untouched when the SEC has no matching concept.
+  try{
+   const filings=await fetch("./timeseries-sec5y.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});
+   if(filings.ok){
+    const sec=await filings.json();
+    for(const [ticker,financials] of Object.entries(sec.companies||{})){
+     if(!DB.companies[ticker])DB.companies[ticker]={};
+     for(const [key,s] of Object.entries(financials||{})){
+      if(!s||!Array.isArray(s.points)||s.points.length<2||!s.unit)continue;
+      const verified=trimFiveYears(s.points.filter(p=>Number.isFinite(p.value)&&/^https:\/\//.test(p.source||"")));
+      if(verified.length<2)continue;
+      const previous=DB.companies[ticker][key];
+      if(previous?.unit&&previous.unit!==s.unit)continue;
+      // Every overlapping date is replaced with the EDGAR filing version.
+      const merged=new Map((previous?.points||[]).filter(p=>p&&p.end&&Number.isFinite(p.value)).map(p=>[p.end,p]));
+      for(const p of verified)merged.set(p.end,p);
+      DB.companies[ticker][key]={
+       ...s,points:trimFiveYears([...merged.values()]),
+       basis:s.basis+(previous?.points?.length?" · nonoverlapping IR quarters retained":"")
+      };
+     }
+    }
+   }
+  }catch(error){console.warn("Five-year SEC EDGAR cache unavailable",error)}
   loaded=true;buildHistoryLists(document);}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
@@ -534,12 +575,12 @@ function buildHistoryLists(scope){
   const ticker=panel.querySelector("h2 span")?.textContent?.trim()?.toUpperCase();
   const metrics=ticker&&DB.companies?.[ticker];
   if(!metrics||panel.querySelector(".ts-series-list"))continue;
-  const entries=Object.entries(metrics).filter(([,v])=>Array.isArray(v?.points)&&v.points.length&&v.unit);
+  const entries=Object.entries(metrics).filter(([,v])=>Array.isArray(v?.points)&&trimFiveYears(v.points).length&&v.unit);
   if(!entries.length)continue;
   const details=document.createElement("details");
   details.className="ts-series-list";
   const sum=document.createElement("summary");
-  sum.textContent="📈 공시 시계열 목록 · "+entries.length+"개 지표";
+  sum.textContent="📈 최근 5년 시계열 · "+entries.length+"개 지표";
   details.append(sum);
   const grid=document.createElement("div");grid.className="ts-series-grid";
   const lang={
@@ -552,7 +593,7 @@ function buildHistoryLists(scope){
    annualRevenue:"연간 매출",computeInfrastructureExpense:"컴퓨팅·인프라 비용",personnelExpense:"인건비",salesMarketingPartnershipExpense:"판매·마케팅·파트너십 비용",operatingExpense:"영업비용 합계",adjustedOperatingIncome:"조정 영업이익 (Non-GAAP)"
   };
   for(const [key,v] of entries){
-   const latest=[...v.points].filter(p=>p?.end&&Number.isFinite(p.value)).sort((a,b)=>a.end.localeCompare(b.end)).at(-1);
+   const latest=trimFiveYears(v.points).filter(p=>Number.isFinite(p.value)).at(-1);
    if(!latest)continue;
    const row=document.createElement("div");row.className="metric-row ts-history-row";
    const left=document.createElement("div");left.className="mr-left";
@@ -569,6 +610,7 @@ function buildHistoryLists(scope){
      v.unit==="EUR million"?(val<0?"-":"")+"€"+Math.abs(val).toLocaleString("en-US")+"M":
      val.toLocaleString("en-US");
    row.append(left,value);
+   const coverage=document.createElement("small");coverage.className="ts-count";coverage.textContent=trimFiveYears(v.points).length+"개 포인트";left.append(coverage);
    grid.append(row);
   }
   details.append(grid);
