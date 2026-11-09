@@ -17,7 +17,7 @@ AS_OF = dt.date.today()
 START = AS_OF.replace(year=AS_OF.year - 5) if AS_OF.month != 2 or AS_OF.day != 29 else AS_OF.replace(year=AS_OF.year - 5, day=28)
 ENDPOINT = "https://data.sec.gov/api/xbrl/companyfacts/CIK{:010d}.json"
 HEADERS = {
-    "User-Agent": "AI Industry Map Research Bot (https://github.com/seonghwikyeong/industry-map/issues)",
+    "User-Agent": "AI Industry Map Research 122859906+seonghwikyeong@users.noreply.github.com (https://github.com/seonghwikyeong/industry-map)",
     "Accept": "application/json",
 }
 # Publicly listed issuers; the SEC listing is still consulted for each CIK.
@@ -135,7 +135,7 @@ def point(record, value=None, derived=False, note=""):
     }
 
 
-def quarterly(records):
+def quarterly(records, derive_cumulative=True):
     direct = latest_by_key([r for r in records if 58 <= r["duration"] <= 122],
                            lambda r: r["end"])
     ytd = latest_by_key([r for r in records if 150 <= r["duration"] <= 322],
@@ -144,7 +144,7 @@ def quarterly(records):
                            lambda r: (r["start"], r["end"]))
     combined = dict(direct)
     # Derive Q2/Q3 from the year-to-date values only if no discrete filing exists.
-    for (start, end), rec in sorted(ytd.items(), key=lambda x: x[0][1]):
+    for (start, end), rec in sorted(ytd.items(), key=lambda x: x[0][1]) if derive_cumulative else []:
         if end in combined:
             continue
         prior = [r for (s, e), r in ytd.items()
@@ -160,7 +160,7 @@ def quarterly(records):
         new["derived_note"] = "Same-fiscal-year YTD difference; SEC filing accessions: " + str(p["accn"]) + ", " + str(rec["accn"])
         combined[end] = new
     # Q4 = full fiscal-year cumulative minus Q3 YTD, matched by same start.
-    for (start, end), rec in annual.items():
+    for (start, end), rec in annual.items() if derive_cumulative else []:
         if end in combined:
             continue
         prev = [r for (s, e), r in ytd.items()
@@ -188,7 +188,7 @@ def company_series(doc, cik):
         CURRENT_KEY = key
         unit = "USD/shares" if key == "eps" else "USD"
         raw = select_facts(gaap, tags, key in INSTANT_KEYS, unit)
-        chosen = balance(raw) if key in INSTANT_KEYS else quarterly(raw)
+        chosen = balance(raw) if key in INSTANT_KEYS else quarterly(raw, derive_cumulative=(key != "eps"))
         points = [point(r, derived="derived_note" in r, note=r.get("derived_note", "")) for r in chosen]
         if len(points) < 2:
             continue
