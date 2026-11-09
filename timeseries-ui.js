@@ -551,11 +551,19 @@ async function load(force){
       const previous=DB.companies[ticker][key];
       if(previous?.unit&&previous.unit!==s.unit)continue;
       // Every overlapping date is replaced with the EDGAR filing version.
-      const merged=new Map((previous?.points||[]).filter(p=>p&&p.end&&Number.isFinite(p.value)).map(p=>[p.end,p]));
-      for(const p of verified)merged.set(p.end,p);
+      const merged=new Map(verified.map(p=>[p.end,p]));
+      // Retain a company IR quarter only when it truly fills a missing SEC quarter.
+      // Different fiscal quarter-end conventions must not create duplicate dots.
+      let retained=0;
+      for(const p of previous?.points||[]){
+       if(!p?.end||!Number.isFinite(p.value)||p.end<fiveYearCutoff())continue;
+       const isSameQuarter=verified.some(q=>Math.abs(Date.parse(q.end)-Date.parse(p.end))<=35*86400000);
+       if(isSameQuarter)continue;
+       merged.set(p.end,p);retained++;
+      }
       DB.companies[ticker][key]={
        ...s,points:trimFiveYears([...merged.values()]),
-       basis:s.basis+(previous?.points?.length?" · nonoverlapping IR quarters retained":"")
+       basis:s.basis+(retained?" · additional nonoverlapping IR periods":"")
       };
      }
     }
