@@ -140,7 +140,7 @@ async function main(){
  const monthlyNode=panel("QUANTA").querySelector(".latest-earnings .metric-row > b");
  if(monthlyNode){const pop=click(monthlyNode);assert.ok(pop.querySelectorAll("svg circle").length>=1,"Quanta click should render");}
  console.log("PASS V5.8: 18 additional issuer datasets, 109 metrics, 315 points");
- const verifiedCompanies=["CSCO","AMAT","CRWV","NBIS"];
+ const verifiedCompanies=["CSCO","AMAT","CRWV","NBIS","SKH","SAMSUNG","TSM","ASML"];
  for(const ticker of verifiedCompanies){
   const p=panel(ticker);
   const card=p.querySelector(".ts-latest-verified");
@@ -156,7 +156,7 @@ async function main(){
  }
  const nvidia=w.AI_EARNINGS_PERIODS.NVDA;
  assert.equal(nvidia.period,"FY27 Q2","unreleased NVIDIA FY27 Q3 should not be marked published");
- console.log("PASS November 2026 verified results for Cisco AMAT CoreWeave Nebius; NVIDIA next quarter remains pending");
+ console.log("PASS eight verified company earnings summaries and native-currency sourced series; NVIDIA next quarter remains pending");
  let checked=0,noNumerics=0;for(const p of panels){const ticker=p.querySelector("h2 span")?.textContent.trim();assert.ok(ticker,"ticker");const numeric=[...p.querySelectorAll(".metric-row > b")].filter(x=>/^\s*[+\-−]?(?:NT\$|₩|€|£|¥|\$)?\s*\d/.test(x.textContent.trim()));const clickable=p.querySelector(".ts-clickable");if(numeric.length){assert.ok(clickable,"no clickable metric for "+ticker);checked++}else noNumerics++}
  console.log("PASS clickable historical-chart controls on "+checked+" numeric-company panels; "+noNumerics+" N/A-only panels exempt");
  w.close();
