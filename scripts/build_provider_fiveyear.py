@@ -81,6 +81,8 @@ def get(url):
             with urllib.request.urlopen(request, timeout=40) as resp:
                 return json.load(resp)
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as exc:
+            if isinstance(exc, urllib.error.HTTPError) and exc.code in (401, 403):
+                raise RuntimeError(f"Provider HTTP {exc.code}: authorization or IP restriction") from exc
             if attempt == 2:
                 raise RuntimeError(f"{type(exc).__name__}: {exc}") from exc
             time.sleep(2 + attempt * 4)
@@ -201,6 +203,9 @@ def main():
                 collect(rows, cik, ticker, group, staging)
             except Exception as e:
                 errors[f"{ticker}/{group}"] = str(e)
+                if ("Provider HTTP 401" in str(e) or "Provider HTTP 403" in str(e)) and existing:
+                    print("WARNING: SEC-XBRL provider now requires authorization. Keeping last successful 5-year filing cache unchanged.", flush=True)
+                    return
             time.sleep(.18)
         series = {}
         for key, dated_points in staging.items():
