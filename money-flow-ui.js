@@ -149,6 +149,7 @@ async function start(){
    if(!r.ok)throw new Error("HTTP "+r.status);
    const d=await r.json();
    if(!Array.isArray(d.companies)||d.companies.length!==47||!Array.isArray(d.links))throw new Error("Invalid money-flow dataset");
+   if(d.links.some(link=>!d.companies.includes(link.from)||!d.companies.includes(link.to)||!link.detail||link.monetary_value!==null))throw new Error("Invalid money-flow directed relationship");
    model=d;css();connectOriginalControls();init(document);
   }catch(e){console.warn("Company-specific money-flow unavailable",e);}
  })();
