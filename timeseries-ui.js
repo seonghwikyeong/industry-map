@@ -504,7 +504,7 @@ function render(){
  if((d.series?.basis||"").includes("TGMCharts")){const note=document.createElement("div");note.className="ts-note";const link=document.createElement("a");link.href="https://tgmcharts.com/";link.target="_blank";link.rel="noopener noreferrer";link.textContent="Data by TGMCharts (tgmcharts.com)";note.textContent="기초 자료: SEC EDGAR XBRL · ";note.appendChild(link);content.append(note)}
  if(d.key==="eps"&&d.series?.basis.includes("TGMCharts")){const note=document.createElement("div");note.className="ts-note";note.textContent="EPS는 회사가 공시한 당시 주당 금액이며, 이후 주식분할에 맞춰 소급 조정되지 않았을 수 있습니다.";content.append(note)}
 }
-function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()});const data=viewData(el);if(data?.key&&!data.forecast){requestRemote(data.ticker,data.key).then(()=>{if(active===el&&o.classList.contains("ts-open"))render()})}}
+function open(el){active=el;const o=overlay();o.classList.add("ts-open");render();o.querySelector(".ts-close").focus();load(false).then(()=>{if(o.classList.contains("ts-open"))render()});const data=viewData(el);if(data?.key&&!data.forecast&&data.points.length<5){requestRemote(data.ticker,data.key).then(()=>{if(active===el&&o.classList.contains("ts-open"))render()})}}
 async function load(force){
  if(loading&&!force)return loading;
  loading=(async()=>{try{const r=await fetch("./timeseries.json?v="+(force?Date.now():Math.floor(Date.now()/3600000)),{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);const json=await r.json();if(!json.companies||typeof json.companies!=="object")throw Error("Invalid timeseries");DB=json;
