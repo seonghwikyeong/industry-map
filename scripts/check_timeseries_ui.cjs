@@ -65,7 +65,7 @@ async function main(){
    assert.equal(series?.unit,unit,ticker+" native reporting currency");
    assert.ok(series.points.length>=min,ticker+" missing verified historical quarters");
    const dates=series.points.map(p=>p.end);
-   assert.deepEqual(dates,[...dates].sort(),ticker+" historical dates not sorted");
+   assert.ok(dates.every((day,i)=>i===0||dates[i-1]<=day),ticker+" historical dates not sorted");
    for(const p of series.points){assert.ok(p.source.startsWith("https://"),ticker+" missing filing source");assert.ok(p.end<="2026-11-05",ticker+" future quarter")}
  }
  console.log("PASS TSM, ASML, SKH and Samsung official-source quarterly histories");
