@@ -1,4 +1,4 @@
-/* AI Industry Map V6.0 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
+/* AI Industry Map V6.1 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -704,7 +704,7 @@ function buildLatestPanels(scope){
    const cell=document.createElement("div");cell.className="ts-latest-fact";
    const key=document.createElement("span");key.textContent=fact.label;
    const value=document.createElement("b");value.textContent=fact.value;
-   const metricByLabel={"매출":"revenue","GAAP EPS":"eps","영업이익률":"operatingMargin","영업현금흐름":"operatingCashFlow","매출총이익률":"grossMargin","영업이익":"operatingIncome","조정 EBITDA":"adjustedEbitda","Revenue Backlog":"revenueBacklog","계속사업 손실":"continuingOperationsIncome","조정 순이익":"adjustedNetIncome"};
+   const metricByLabel={"매출":"revenue","GAAP EPS":"eps","영업이익률":"operatingMargin","영업현금흐름":"operatingCashFlow","매출총이익률":"grossMargin","영업이익":"operatingIncome","조정 EBITDA":"adjustedEbitda","Revenue Backlog":"revenueBacklog","계속사업 손실":"continuingOperationsIncome","조정 순이익":"adjustedNetIncome","순이익":"netIncome","DS 매출":"deviceSolutionsRevenue","DS 영업이익":"deviceSolutionsOperatingIncome","설치기반 매출":"installedBaseRevenue"};
    if(metricByLabel[fact.label])value.dataset.tsKey=metricByLabel[fact.label];
    const meta=document.createElement("small");meta.textContent=fact.tag;
    cell.append(key,value,meta);grid.append(cell);
