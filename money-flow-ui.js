@@ -1,160 +1,131 @@
-/* AI Industry Map V6.2 · 47-company contextual money-flow network.
- * Conceptual procurement/spending adjacency, not confirmed bilateral amounts.
- * Existing eight quantified values remain marked hypothetical assumptions.
- */
+/* AI Industry Map V6.3 · verified-only bilateral money-flow disclosures.
+   Only signed documented business contracts, booked bilateral commercial revenue,
+   and completed share investments. No estimates, forecasts, inferred links or formulae. */
 (function(){
 "use strict";
-let model=null, pending=null;
-const QUANT=[
- ["MSFT","NVDA","$41B × 66.7% × 65% ≈ $17.8B"],
- ["META","NVDA","$137.5B × 75% × 55% × 70% ≈ $39.7B"],
- ["AMZN","NVDA","$169B × 70% × 45% × 80% ≈ $42.6B"],
- ["GOOGL","AVGO","$200B × 75% × 55% × 18% ≈ $14.9B"],
- ["NVDA","MU","$89B × 10% × 20% ≈ $1.78B"],
- ["NVDA","ANET","$100B × 12% × 35% = $4.2B"],
- ["NVDA","VRT","$100B × 15% × 18% = $2.7B"],
- ["NVDA","ETN","$100B × 10% × 25% = $2.5B"]
-];
-const quant=new Map(QUANT.map(([a,b,value])=>[a+"|"+b,value]));
-function node(tag,cls,text){
- const n=document.createElement(tag);if(cls)n.className=cls;
- if(text!==undefined)n.textContent=String(text);
- return n;
+let data=null,pending=null;
+const KINDS={
+ signed_commitment:"체결된 구매·사용 약정",
+ confirmed_contract:"확인된 공급·서비스 계약",
+ recognized_revenue:"기업이 인식한 관련 매출",
+ completed_investment:"집행 완료된 지분투자"
+};
+function el(tag,cls,content){
+ const x=document.createElement(tag);if(cls)x.className=cls;if(content!==undefined)x.textContent=String(content);return x;
 }
-function titleOf(ticker){
- const index=[...document.querySelectorAll(".company-panels > .company-panel")].find(p=>p.querySelector("h2 span")?.textContent.trim().toUpperCase()===ticker);
- if(index){const a=index.querySelector("h2 a");if(a)return a.textContent.replace(ticker,"").replace("↗","").trim();}
- return ticker;
-}
-function edgeCard(link,ticker,side){
- const partner=side==="out"?link.to:link.from;
- const article=node("article","flow-v62-card");
- const first=node("div","flow-v62-tops");
- const anchor=node("a","flow-v62-route",side==="out"?ticker+" → "+partner:partner+" → "+ticker);
- anchor.href="./company.html?ticker="+encodeURIComponent(partner);
- anchor.title=partner+" 기업 상세 분석으로 이동";
- first.append(anchor);
- const scenario=quant.get(link.from+"|"+link.to);
- const flag=node("span",scenario?"flow-v62-tag scenario":"flow-v62-tag","산업구조 가정"+(scenario?" · 정량 시나리오":""));
- first.append(flag);article.append(first);
- article.append(node("p","flow-v62-detail",link.detail));
- if(scenario){
-  const calc=node("div","flow-v62-scenario",scenario);
-  const mark=node("small",null,"기존 가정 기반 배분 계산 · 실제 거래액/확정 매출 아님");
-  calc.append(mark);article.append(calc);
+function createRecord(r,ticker,side){
+ const box=el("article","flow-v63-record");
+ const head=el("div","flow-v63-top");
+ const other=side==="out"?r.to:r.from;
+ const direction=el("a","flow-v63-pair",r.from+" → "+r.to);
+ direction.href="./company.html?ticker="+encodeURIComponent(other);
+ direction.title=other+" 상세 분석 페이지";
+ head.append(direction);
+ head.append(el("span","flow-v63-type",KINDS[r.type]));
+ box.append(head);
+ box.append(el("h4","flow-v63-name",r.label));
+ if(r.amount){
+  const block=el("div","flow-v63-value");
+  block.append(el("strong",null,r.amount.display));
+  block.append(el("span",null,r.type==="recognized_revenue"?"매출 인식액 · 해당 회계연도":
+      r.type==="completed_investment"?"실제 지분 투자 거래":
+      r.amount.unit==="GW"?"계약상 설비 용량 · 구매대금 비공개":"장기 계약 약정·상한 · 실제 지급액 아님"));
+  box.append(block);
+ }else{
+  box.append(el("div","flow-v63-undisclosed","거래 금액 비공개"));
  }
- const footer=node("div","flow-v62-foot",side==="out"?"지출·조달 방향 → 공급업체/인프라":"수요·매출 노출 방향 ← 고객/수요처");
- article.append(footer);
- return article;
+ box.append(el("p","flow-v63-detail",r.detail));
+ const source=el("div","flow-v63-source");
+ const date=r.signed||"날짜 미확인";
+ source.append(el("span",null,"확인 기준 "+date+" · "));
+ (r.sources||[]).forEach((s,i)=>{
+  if(i)source.append(document.createTextNode(" · "));
+  const a=el("a",null,"공시·IR 원문 "+(i+1)+" ↗");
+  a.href=s.url;a.title=s.label;a.target="_blank";a.rel="noopener noreferrer";source.append(a);
+ });
+ box.append(source);
+ return box;
 }
-function makeGroup(ticker,links,type){
- const incoming=type==="in",heading=node("details","flow-v62-group");
- heading.open=links.length<=7;
- const summary=node("summary",null,(incoming?"들어오는 잠재 수요 · 고객/수요처":"나가는 잠재 지출 · 공급업체/설비")+" ("+links.length+"개)");
- heading.append(summary);
- const list=node("div","flow-v62-list");
- links.forEach(link=>list.append(edgeCard(link,ticker,incoming?"in":"out")));
- heading.append(list);return heading;
-}
-function renderPanel(panel){
- if(!model||panel.querySelector(".flow-v62"))return;
- const ticker=panel.querySelector("h2 span")?.textContent?.trim()?.toUpperCase();
- if(!ticker||!model.companies.includes(ticker))return;
- const inbound=model.links.filter(x=>x.to===ticker),outbound=model.links.filter(x=>x.from===ticker);
- const root=node("section","flow-v62");root.dataset.moneyTicker=ticker;
- const header=node("div","flow-v62-head");
- header.append(node("div","flow-v62-eyebrow","QUANTITATIVE MONEY-FLOW EDGE · "+ticker));
- header.append(node("h3",null,ticker+" 자금흐름 관계"));
- header.append(node("p","flow-v62-explain","아래 화살표는 실제 대금 지급이 검증된 계약 목록이 아니라 AI 가치사슬에서 나타날 수 있는 구매·투자·매출노출 방향을 나타냅니다. 상대 기업명 클릭 시 상세 화면으로 이동합니다."));
- root.append(header);
- root.append(makeGroup(ticker,inbound,"in"));
- root.append(makeGroup(ticker,outbound,"out"));
- root.append(node("p","flow-v62-warning","주의: 정량 시나리오의 배분율은 가정값입니다. 공개 CapEx, 예상 수주, 실제 현금지출, 매출 인식 시점은 서로 다르며 중복 합산하면 안 됩니다. 직접 계약 여부·금액은 확인되지 않았습니다."));
- panel.append(root);
-}
-function init(root){
- if(!model)return;
- const scope=root||document;
- scope.querySelectorAll(".company-panel").forEach(renderPanel);
-}
-function connectOriginalControls(){
- const old=document.querySelector(".rightbar > .edge-panels");
- if(old){
-  old.hidden=true;old.style.display="none";
-  const heading=old.previousElementSibling;
-  if(heading?.classList.contains("right-section-title")){heading.hidden=true;heading.style.display="none";}
-  const divider=heading?.previousElementSibling;
-  if(divider?.classList.contains("divider")){divider.hidden=true;divider.style.display="none";}
+function section(ticker,kind,rows){
+ const detail=el("details","flow-v63-group");
+ detail.open=true;
+ detail.append(el("summary",null,(kind==="in"?"확인된 유입 · 고객/투자자":"확인된 유출 · 서비스 구매/투자")+" ("+rows.length+"건)"));
+ if(!rows.length){
+  detail.append(el("p","flow-v63-empty","현재 공개된 공식 계약·공시 중 검증된 해당 방향의 거래가 없습니다. 거래가 존재하지 않는다는 의미는 아닙니다."));
+ }else{
+  const list=el("div","flow-v63-list");
+  for(const row of rows)list.append(createRecord(row,ticker,kind));
+  detail.append(list);
  }
- const mainTitle=[...document.querySelectorAll(".section-title")].find(e=>/Quantitative money-flow edges/i.test(e.textContent));
- if(mainTitle)mainTitle.textContent="Money-flow 시나리오 8개 · 기업 선택 시 해당 기업 관계 보기";
- document.querySelectorAll(".edge-grid label.edge-chip").forEach((chip,index)=>{
-  if(chip.dataset.flowV62Connected)return;
-  chip.dataset.flowV62Connected="1";
-  chip.addEventListener("click",()=>{
-   const record=QUANT[index];
-   if(!record)return;
-   const ticker=record[0];
-   const panel=[...document.querySelectorAll(".company-panels > .company-panel")].find(p=>p.querySelector("h2 span")?.textContent.trim().toUpperCase()===ticker);
-   const cls=panel?.className.match(/\bcp-(\d+)\b/);
-   const input=cls&&document.getElementById("company-"+cls[1]);
-   if(input){input.checked=true;input.dispatchEvent(new Event("change",{bubbles:true}));}
-   if(panel){
-    const cards=[...panel.querySelectorAll(".flow-v62-card")];
-    const matched=cards.find(card=>card.querySelector(".flow-v62-route")?.textContent.trim()===record[0]+" → "+record[1]);
-    if(matched){
-     const group=matched.closest("details");if(group)group.open=true;
-     matched.classList.add("flow-v62-emphasis");
-     setTimeout(()=>matched.classList.remove("flow-v62-emphasis"),1300);
-    }
-   }
-  });
+ return detail;
+}
+function panelTicker(panel){return panel.querySelector("h2 span")?.textContent?.trim()?.toUpperCase()}
+function draw(root){
+ if(!data)return;
+ (root||document).querySelectorAll(".company-panel").forEach(panel=>{
+  const ticker=panelTicker(panel);
+  if(!ticker||!data.companies.includes(ticker)||panel.querySelector(".flow-v63"))return;
+  // Discard any old speculative widget on dynamic detail-page upgrades.
+  panel.querySelectorAll(".flow-v62").forEach(x=>x.remove());
+  const main=el("section","flow-v63");
+  main.dataset.moneyTicker=ticker;
+  main.append(el("div","flow-v63-eyebrow","VERIFIED MONEY-FLOW · 공시 확인 자료만"));
+  main.append(el("h3",null,ticker+" · 실제 확인된 계약·자금흐름"));
+  main.append(el("p","flow-v63-explain","공식 계약서·SEC 공시·기업 IR에서 거래 당사자와 계약 내용이 확인된 항목만 표시합니다. 금액 비공개는 추정하지 않습니다."));
+  main.append(section(ticker,"in",data.links.filter(x=>x.to===ticker)));
+  main.append(section(ticker,"out",data.links.filter(x=>x.from===ticker)));
+  main.append(el("p","flow-v63-caveat","계약상 약정액·최대 한도는 현금 지급액 또는 매출 인식액과 다릅니다. 지분투자, 서비스 계약, 회사별 매출 인식 금액도 서로 합산하지 않습니다. 공시 당시 상태이며 이후 변경은 별도 재검증이 필요합니다."));
+  panel.append(main);
  });
 }
 function css(){
- if(document.getElementById("money-flow-v62-styles"))return;
- const style=node("style");style.id="money-flow-v62-styles";
- style.textContent=[
- ".flow-v62{margin:18px 0 20px;padding:14px;border:1px solid #376677;border-radius:12px;background:#0b2132;color:#e0f1fa}",
- ".flow-v62-eyebrow{font-size:10px;letter-spacing:.07em;color:#7fe6d2;font-weight:800}",
- ".flow-v62-head h3{font-size:17px!important;color:#e6fdff;margin:6px 0!important}",
- ".flow-v62-explain{font-size:11px;line-height:1.65;color:#a8c8da;margin:5px 0 13px}",
- ".flow-v62-group{margin-top:9px;border:1px solid #31546b;border-radius:9px;overflow:hidden}",
- ".flow-v62-group>summary{padding:11px 12px;color:#eaf7ff;font-size:13px;font-weight:750;cursor:pointer;background:#15344b}",
- ".flow-v62-list{padding:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px}",
- ".flow-v62-card{background:#0d2b40;border:1px solid #2b4e62;border-radius:8px;padding:11px;min-width:0}",
- ".flow-v62-tops{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px}",
- ".flow-v62-route{color:#97e9f7!important;font-size:13px;font-weight:800;text-decoration:none}",
- ".flow-v62-route:hover{text-decoration:underline}",
- ".flow-v62-tag{background:#223f4c;color:#adcad4;padding:3px 6px;border-radius:4px;font-size:10px}",
- ".flow-v62-tag.scenario{background:#4e3a26;color:#f6c783}",
- ".flow-v62-detail{font-size:12px;line-height:1.5;color:#d3e4ea;margin:8px 0}",
- ".flow-v62-foot{font-size:10px;color:#90a9b9;border-top:1px solid #355368;padding-top:8px}",
- ".flow-v62-scenario{padding:8px;border:1px dashed #9b7c49;border-radius:5px;color:#ffd391;font-size:12px;font-weight:750;margin:8px 0}",
- ".flow-v62-scenario small{display:block;font-size:10px;font-weight:400;line-height:1.5;color:#d4b9a0;margin-top:5px}",
- ".flow-v62-warning{font-size:11px;line-height:1.7;margin:11px 0 0;color:#c4b9ad}",
- ".flow-v62-card.flow-v62-emphasis{outline:2px solid #ffc87a}",
- ".source-panel .flow-v62{padding:17px;margin:22px 0}",
- ".source-panel .flow-v62-detail{font-size:14px}",
- ".source-panel .flow-v62-explain,.source-panel .flow-v62-warning{font-size:13px}",
- "@media(max-width:700px){.flow-v62-list{grid-template-columns:1fr}.flow-v62{padding:10px}}"
+ if(document.getElementById("flow-v63-style"))return;
+ const s=el("style");s.id="flow-v63-style";
+ s.textContent=[
+ ".flow-v63{margin:16px 0 22px;padding:15px;border:1px solid #3e7181;border-radius:11px;background:#091e2d;color:#e6f5ff}",
+ ".flow-v63-eyebrow{color:#76e7d1;font-weight:800;font-size:10px;letter-spacing:1px}",
+ ".flow-v63 h3{font-size:17px!important;margin:7px 0 9px!important;color:#eafaff}",
+ ".flow-v63-explain,.flow-v63-caveat{font-size:11px;line-height:1.7;color:#b4ccd7;margin:9px 0 12px}",
+ ".flow-v63-group{border:1px solid #33546a;border-radius:8px;margin:10px 0;overflow:hidden}",
+ ".flow-v63-group summary{font-size:12px;font-weight:800;cursor:pointer;background:#12364b;padding:10px 13px}",
+ ".flow-v63-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:9px;padding:9px}",
+ ".flow-v63-record{padding:12px;background:#102e42;border:1px solid #33576e;border-radius:8px;min-width:0}",
+ ".flow-v63-top{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:space-between}",
+ ".flow-v63-pair{color:#a2e8f4!important;font-size:12px;font-weight:850;text-decoration:none}",
+ ".flow-v63-pair:hover{text-decoration:underline}",
+ ".flow-v63-type{border-radius:4px;background:#25475b;color:#b9e6f3;padding:4px 6px;font-size:10px}",
+ ".flow-v63-name{font-size:13px!important;color:#ecf8ff!important;margin:9px 0!important}",
+ ".flow-v63-value{padding:8px;background:#163d49;border-left:3px solid #6bdfc6;border-radius:5px}",
+ ".flow-v63-value strong{font-size:15px;display:block;color:#d1fff3}",
+ ".flow-v63-value span{display:block;font-size:10px;margin-top:6px;color:#a6cbd0}",
+ ".flow-v63-undisclosed{font-size:12px;font-weight:750;color:#d3d7da}",
+ ".flow-v63-detail{font-size:11px;color:#d0e1ed;line-height:1.7;margin:9px 0}",
+ ".flow-v63-source{font-size:10px;line-height:1.7;color:#91a9bd;border-top:1px solid #35566b;padding-top:8px}",
+ ".flow-v63-source a{font-size:10px;color:#8ce4eb!important;text-decoration:underline}",
+ ".flow-v63-empty{color:#aabed1;line-height:1.7;padding:15px;font-size:12px}",
+ ".source-panel .flow-v63{padding:17px}.source-panel .flow-v63-detail,.source-panel .flow-v63-explain{font-size:13px}",
+ "@media(max-width:680px){.flow-v63-list{grid-template-columns:1fr}.flow-v63{padding:10px}}"
  ].join("\n");
- document.head.append(style);
+ document.head.append(s);
 }
-async function start(){
+async function fetchData(){
  if(pending)return pending;
  pending=(async()=>{
   try{
-   const r=await fetch("./money-flow-links.json?v=62",{cache:"no-store"});
-   if(!r.ok)throw new Error("HTTP "+r.status);
-   const d=await r.json();
-   if(!Array.isArray(d.companies)||d.companies.length!==47||!Array.isArray(d.links))throw new Error("Invalid money-flow dataset");
-   if(d.links.some(link=>!d.companies.includes(link.from)||!d.companies.includes(link.to)||!link.detail||link.monetary_value!==null))throw new Error("Invalid money-flow directed relationship");
-   model=d;css();connectOriginalControls();init(document);
-  }catch(e){console.warn("Company-specific money-flow unavailable",e);}
+   const res=await fetch("./money-flow-links.json?v=63",{cache:"no-store"});
+   if(!res.ok)throw Error("HTTP "+res.status);
+   const payload=await res.json();
+   const known=new Set(payload.companies||[]);
+   const allowed=new Set(Object.keys(KINDS));
+   if(known.size!==47||!Array.isArray(payload.links)||payload.links.some(x=>
+     !known.has(x.from)||!known.has(x.to)||!allowed.has(x.type)||
+     !Array.isArray(x.sources)||!x.sources.length||!x.sources.every(s=>/^https:\/\//.test(s.url))||
+     (x.amount&&!x.amount.display)))throw Error("Unverified money-flow data");
+   data=payload;css();draw(document);
+  }catch(err){console.warn("Verified money-flow disclosure not loaded",err);}
  })();
  return pending;
 }
-window.initIndustryMoneyFlow=(root)=>{if(model)init(root);else start().then(()=>init(root))};
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
+window.initIndustryMoneyFlow=(root)=>data?draw(root):fetchData().then(()=>draw(root));
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",fetchData);else fetchData();
 })();
