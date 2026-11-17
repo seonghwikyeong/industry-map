@@ -7,6 +7,10 @@ on:
     paths:
       - 'scripts/check_timeseries_ui.cjs'
       - 'timeseries-ui.js'
+      - 'money-flow-ui.js'
+      - 'money-flow-links.json'
+      - 'scripts/check_money_flow.cjs'
+      - 'company.html'
       - 'index.html'
 
 permissions:
@@ -24,6 +28,10 @@ jobs:
       - name: Install browser DOM test framework
         run: npm install --no-save --no-audit --no-fund jsdom@26
       - name: Verify syntax
-        run: node --check timeseries-ui.js
+        run: |
+          node --check timeseries-ui.js
+          node --check money-flow-ui.js
       - name: Test click-to-chart interactions for 47 companies
         run: node scripts/check_timeseries_ui.cjs
+      - name: Verify money flow matches all 47 companies and scenarios
+        run: node scripts/check_money_flow.cjs
