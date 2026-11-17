@@ -223,6 +223,11 @@ def main():
             errors[ticker] = "Provider unavailable; preserved prior SEC data"
         else:
             errors[ticker] = "No eligible normalized SEC facts; older IR data remains available"
+    if total_api_rows == 0:
+        if existing:
+            print("WARNING: Live SEC-XBRL provider returned no rows (possibly HTTP 401); preserving the last successfully generated five-year file without changing its data timestamp.", flush=True)
+            return
+        raise RuntimeError("Provider returned no rows and no five-year cache exists")
     count = sum(len(s["points"]) for m in companies.values() for s in m.values())
     print("Provider rows", total_api_rows, "companies", len(companies), "points", count, flush=True)
     if count < 100:
