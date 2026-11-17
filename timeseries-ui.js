@@ -633,6 +633,22 @@ async function load(force){
     }
    }
   }catch(error){console.warn("Latest official IR update unavailable",error)}
+  // Expose complete five-year Taiwan monthly-derived quarterly sales on the
+  // primary consolidated revenue chart; a same-period reported IR figure wins.
+  for(const ticker of ["TSM","ASE","QUANTA","WISTRON","FOXCONN"]){
+   const company=DB.companies[ticker];
+   const derived=company?.quarterlyRevenue;
+   const reported=company?.revenue;
+   if(!derived||derived.unit!=="TWD million"||reported?.unit&&reported.unit!==derived.unit)continue;
+   const combined=new Map(trimFiveYears(derived.points).map(p=>[p.end,p]));
+   for(const p of trimFiveYears(reported?.points||[])){
+    for(const [date] of combined)if(Math.abs(Date.parse(date)-Date.parse(p.end))<35*86400000)combined.delete(date);
+    combined.set(p.end,p);
+   }
+   company.revenue={unit:"TWD million",frequency:"quarterly",
+    basis:"TWSE MOPS official monthly revenue (3-month Derived) + available company reported quarterly figures",
+    points:trimFiveYears([...combined.values()])};
+  }
   loaded=true;buildHistoryLists(document);buildLatestPanels(document);}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
