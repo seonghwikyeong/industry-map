@@ -704,6 +704,8 @@ function buildLatestPanels(scope){
    const cell=document.createElement("div");cell.className="ts-latest-fact";
    const key=document.createElement("span");key.textContent=fact.label;
    const value=document.createElement("b");value.textContent=fact.value;
+   const metricByLabel={"매출":"revenue","GAAP EPS":"eps","영업이익률":"operatingMargin","영업현금흐름":"operatingCashFlow","매출총이익률":"grossMargin","영업이익":"operatingIncome","조정 EBITDA":"adjustedEbitda","Revenue Backlog":"revenueBacklog","계속사업 손실":"continuingOperationsIncome","조정 순이익":"adjustedNetIncome"};
+   if(metricByLabel[fact.label])value.dataset.tsKey=metricByLabel[fact.label];
    const meta=document.createElement("small");meta.textContent=fact.tag;
    cell.append(key,value,meta);grid.append(cell);
   }
