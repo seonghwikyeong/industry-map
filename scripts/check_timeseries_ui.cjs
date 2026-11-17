@@ -13,11 +13,12 @@ async function main(){
  const secFiveYear=JSON.parse(fs.readFileSync(path.join(repo,"timeseries-sec5y.json"),"utf8"));
  const bootstrap=JSON.parse(fs.readFileSync(path.join(repo,"timeseries-bootstrap5y.json"),"utf8"));
  const irUpdates=JSON.parse(fs.readFileSync(path.join(repo,"latest-financials-20261117.json"),"utf8"));
+ const taiwan5y=JSON.parse(fs.readFileSync(path.join(repo,"timeseries-twse5y.json"),"utf8"));
  const js=fs.readFileSync(path.join(repo,"timeseries-ui.js"),"utf8");
  const period=fs.readFileSync(path.join(repo,"earnings-periods.js"),"utf8");
  const dom=new JSDOM(html,{url:"https://seonghwikyeong.github.io/industry-map/",runScripts:"outside-only",pretendToBeVisual:true});
  const w=dom.window;
- w.fetch=async url=>({ok:true,status:200,json:async()=>String(url).includes("latest-financials-20261117.json")?irUpdates:String(url).includes("timeseries-sec5y.json")?secFiveYear:String(url).includes("timeseries-bootstrap5y.json")?bootstrap:String(url).includes("timeseries-v58.json")?extension:String(url).includes("timeseries-v56.json")?supplement:String(url).includes("timeseries.json")?history:{symbol:"MSFT",currency:"USD",rows:[]}});
+ w.fetch=async url=>({ok:true,status:200,json:async()=>String(url).includes("timeseries-twse5y.json")?taiwan5y:String(url).includes("latest-financials-20261117.json")?irUpdates:String(url).includes("timeseries-sec5y.json")?secFiveYear:String(url).includes("timeseries-bootstrap5y.json")?bootstrap:String(url).includes("timeseries-v58.json")?extension:String(url).includes("timeseries-v56.json")?supplement:String(url).includes("timeseries.json")?history:{symbol:"MSFT",currency:"USD",rows:[]}});
  w.eval(period);
  w.eval(js);
  await new Promise(resolve=>setTimeout(resolve,950));
@@ -154,6 +155,14 @@ async function main(){
   const labels=[...chart.querySelectorAll(".ts-points tbody tr")].map(x=>x.textContent);
   assert.ok(labels.some(x=>x.includes(irUpdates.companies[ticker].period)),"IR quarter missing from chart "+ticker);
  }
+ for(const ticker of ["TSM","ASE","QUANTA","WISTRON","FOXCONN"]){
+   const p=panel(ticker);
+   const node=p.querySelector(".ts-series-list [data-ts-key='revenue']");
+   assert.ok(node,"Missing Taiwan native-currency consolidated revenue chart "+ticker);
+   const o=click(node);
+   assert.ok(o.querySelectorAll("svg circle").length>=12,"Taiwan "+ticker+" should show at least 12 source-backed quarters");
+ }
+ console.log("PASS Taiwan MOPS monthly reports merged into main revenue charts for five issuers");
  const nvidia=w.AI_EARNINGS_PERIODS.NVDA;
  assert.equal(nvidia.period,"FY27 Q2","unreleased NVIDIA FY27 Q3 should not be marked published");
  console.log("PASS eight verified company earnings summaries and native-currency sourced series; NVIDIA next quarter remains pending");
