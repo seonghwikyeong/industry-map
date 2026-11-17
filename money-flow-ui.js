@@ -29,7 +29,7 @@ function createRecord(r,ticker,side){
   block.append(el("strong",null,r.amount.display));
   block.append(el("span",null,r.type==="recognized_revenue"?"매출 인식액 · 해당 회계연도":
       r.type==="completed_investment"?"실제 지분 투자 거래":
-      r.amount.unit==="GW"?"계약상 설비 용량 · 구매대금 비공개":"장기 계약 약정·상한 · 실제 지급액 아님"));
+      ["GW","MW"].includes(r.amount.unit)?"계약상 설비·물량 규모 · 구매대금 비공개":"장기 계약 약정·상한 · 실제 지급액 아님"));
   box.append(block);
  }else{
   box.append(el("div","flow-v63-undisclosed","거래 금액 비공개"));
