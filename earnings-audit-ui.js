@@ -1,4 +1,4 @@
-/* AI Industry Map V4.2 · fiscal/calendar period audit */
+/* AI Industry Map V6.0 · fiscal/calendar period audit */
 (function(){
 "use strict";
 const E=window.AI_EARNINGS_PERIODS||{};
@@ -42,11 +42,13 @@ function build(panel){
  if(x.start&&x.end)explanations.push("대상 기간 "+fmt(x.start)+" ~ "+fmt(x.end));
  else if(x.end)explanations.push("분기 종료 "+fmt(x.end));
  if(x.release)explanations.push((definedSource?"공식 발표 ":"사이트 기재 발표일 · 미검증 ")+fmt(x.release));
+ if(x.next_release&&Date.parse(x.next_release+"T23:59:59+09:00")>now.getTime())explanations.push("다음 실적 예정 "+(x.next_period||"")+" · 한국시간 "+fmt(x.next_release)+" (미발표; 실제 실적에 포함하지 않음)");
  if(snap&&actual&&normalize(snap)!==normalize(actual))explanations.push("공통 FA 기존 스냅샷 "+snap+" (최신 실적과 분리)");
  else if(snap&&!actual)explanations.push("기존 스냅샷 "+snap);
  if(!definedSource)explanations.push("표시된 수치의 실적 발표일·출처 일치 추가 확인 필요");
  details.textContent=explanations.join("  |  ");block.append(details);
  if(definedSource){const link=document.createElement("a");link.textContent="공식 실적 발표 원문 ↗";link.href=x.url;link.target="_blank";link.rel="noopener noreferrer";block.append(link)}
+ if(x.next_release&&Date.parse(x.next_release+"T23:59:59+09:00")>now.getTime()&&x.next_url){const n=document.createElement("a");n.textContent="다음 실적 발표 일정 ↗";n.href=x.next_url;n.target="_blank";n.rel="noopener noreferrer";n.style.marginLeft="12px";block.append(n)}
  const h2=panel.querySelector("h2");if(h2)h2.after(block);
  if(snap&&actual&&normalize(snap)!==normalize(actual)&&common){
    const banner=document.createElement("div");banner.className="earnings-audit-old";banner.textContent="과거 재무 스냅샷 · "+snap+" · 최신 "+actual+"과 혼합 계산 금지";const title=common.querySelector("h3");if(title)title.after(banner);
