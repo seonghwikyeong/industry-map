@@ -31,6 +31,8 @@ EXTRA = read("timeseries-v58.json")
 BOOT = read("timeseries-bootstrap5y.json")
 SEC = read("timeseries-sec5y.json")
 TWSE = read("timeseries-twse5y.json")
+LATEST = read("latest-financials-20261117.json")
+NEWS = json.loads((ROOT/"news.json").read_text()) if (ROOT/"news.json").exists() else {}
 report = []
 for ticker in UNIVERSE:
     candidates = []
@@ -38,8 +40,10 @@ for ticker in UNIVERSE:
         ("manual", BASE, False), ("supplement", COMPACT, True),
         ("global", EXTRA, False), ("bootstrap", BOOT, False),
         ("SEC EDGAR", SEC, False), ("TWSE MOPS", TWSE, False),
+        ("latest IR", LATEST, False),
     ):
         r = database.get(ticker, {})
+        if kind == "latest IR": r = r.get("series", {})
         keys = r.get("metrics", {}) if compact else r
         for key in keys:
             eligible = [p for p in points_of(r, key, compact)
@@ -71,6 +75,11 @@ summary = {
     "twse_company_count": len(TWSE),
     "sec_metric_count": sum(len(s) for s in SEC.values()),
     "sec_points": sum(len(v.get("points", [])) for s in SEC.values() for v in s.values()),
+    "twse_monthly_points": sum(len(v.get("monthlyRevenue",{}).get("points",[])) for v in TWSE.values()),
+    "latest_ir_company_count": len(LATEST),
+    "news_generated_at": NEWS.get("generated_at"),
+    "news_company_count": len(NEWS.get("companies",{})),
+    "news_headline_count": sum(len(a) for a in NEWS.get("companies",{}).values()),
 }
 print(json.dumps(summary, ensure_ascii=False))
 for item in report:
