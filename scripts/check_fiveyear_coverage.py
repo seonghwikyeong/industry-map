@@ -54,7 +54,7 @@ for ticker in UNIVERSE:
                 candidates.append((key, kind, len({p["end"] for p in eligible})))
     core = [x for x in candidates if x[0] == "revenue" and x[1] != "TWSE MOPS"]
     tw = [x for x in candidates if x[0] == "quarterlyRevenue"]
-    best = max(core or tw or [], key=lambda x: x[2], default=None)
+    best = max(core + tw, key=lambda x: x[2], default=None)  # Compare disclosed quarterly and 3-month official MOPS-derived quarterly coverage
     metric_keys = {item[0] for item in candidates}
     srcs = sorted({item[1] for item in candidates})
     report.append({
@@ -71,6 +71,7 @@ summary = {
     "with_any_history": sum(x["history_available"] for x in report),
     "with_revenue_16_plus_quarters": sum(x["reported_revenue_quarters"] >= 16 for x in report),
     "with_revenue_20_plus_quarters": sum(x["reported_revenue_quarters"] >= 20 for x in report),
+    "with_revenue_12_plus_quarters": sum(x["reported_revenue_quarters"] >= 12 for x in report),
     "sec_company_count": len(SEC),
     "twse_company_count": len(TWSE),
     "sec_metric_count": sum(len(s) for s in SEC.values()),
