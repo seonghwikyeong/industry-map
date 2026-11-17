@@ -1,10 +1,10 @@
-/* AI Industry Map V5.9 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
+/* AI Industry Map V6.0 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
 (function(){
 "use strict";
-let DB={generated_at:null,companies:{}},loaded=false,loading=null,active=null;
+let DB={generated_at:null,companies:{}},LATEST={companies:{}},loaded=false,loading=null,active=null;
 const PERIODS=window.AI_EARNINGS_PERIODS||{};
 const MAX_YEARS=5;
 function fiveYearCutoff(){
@@ -415,6 +415,17 @@ function style(){
  ".ts-history-row .mr-left{display:flex;flex-direction:column;gap:3px;font-size:11px}",
  ".ts-history-row .mr-left small{font-size:10px;color:#8aaac3}",
  ".ts-history-row .ts-count{color:#72d8c4;font-weight:600}",
+ ".ts-latest-verified{margin:12px 0 16px;border:1px solid #43756f;background:#0d2932;border-radius:10px;padding:12px 14px;color:#e7f7ff}",
+ ".ts-latest-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#91eed3}",
+ ".ts-latest-header a{color:#a0e9ff;font-size:12px}",
+ ".ts-latest-headline{font-weight:750;font-size:14px;line-height:1.5;margin:8px 0}",
+ ".ts-latest-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px}",
+ ".ts-latest-fact{background:#143745;border:1px solid #2e5664;padding:8px 10px;border-radius:7px;display:flex;flex-direction:column;gap:4px}",
+ ".ts-latest-fact span{font-size:11px;color:#b9d2dc}",
+ ".ts-latest-fact b{font-size:16px;color:#f5fff5}",
+ ".ts-latest-fact small{font-size:10px;color:#8fcaba}",
+ ".ts-latest-disclaimer{font-size:11px;color:#b4d0d1;line-height:1.65;margin:9px 0 0}",
+
  ".ts-history-row b{font-size:12px;white-space:nowrap}",
  "@media(max-width:650px){.ts-content{padding:12px}.ts-top{padding:12px}.ts-points{font-size:11px}.ts-points td,.ts-points th{padding:6px 4px}}"
  ].join("\n");document.head.appendChild(s)
@@ -600,7 +611,29 @@ async function load(force){
     }
    }
   }catch(error){console.warn("Five-year Taiwan MOPS cache unavailable",error)}
-  loaded=true;buildHistoryLists(document);}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
+  // Official IR releases since the last company snapshots; preserve older 5-year points.
+  try{
+   const ir=await fetch("./latest-financials-20261117.json?v=20261117",{cache:"no-store"});
+   if(ir.ok){
+    const latest=await ir.json();LATEST=latest;
+    for(const [ticker,record] of Object.entries(latest.companies||{})){
+     if(!DB.companies[ticker])DB.companies[ticker]={};
+     for(const [key,series] of Object.entries(record.series||{})){
+      if(!series?.unit||!Array.isArray(series.points)||!series.points.length)continue;
+      const previous=DB.companies[ticker][key];
+      if(previous?.unit&&previous.unit!==series.unit)continue;
+      const additions=trimFiveYears(series.points.filter(p=>Number.isFinite(p.value)&&String(p.source||"").startsWith("https://")));
+      if(!additions.length)continue;
+      const history=(previous?.points||[]).filter(p=>p&&p.end&&Number.isFinite(p.value)&&
+       !additions.some(a=>Math.abs(Date.parse(a.end)-Date.parse(p.end))<35*86400000));
+      DB.companies[ticker][key]={...series,
+       basis:series.basis+(history.length?" · prior SEC/IR observations":""),
+       points:trimFiveYears([...history,...additions])};
+     }
+    }
+   }
+  }catch(error){console.warn("Latest official IR update unavailable",error)}
+  loaded=true;buildHistoryLists(document);buildLatestPanels(document);}catch(e){console.warn("Financial time series unavailable:",e)}})();return loading;
 }
 function eligible(el){
  if(!el?.closest?.(".company-panel"))return false;
@@ -656,9 +689,35 @@ function buildHistoryLists(scope){
   panel.append(details);
  }
 }
+function buildLatestPanels(scope){
+ for(const panel of scope.querySelectorAll(".company-panel")){
+  const ticker=panel.querySelector("h2 span")?.textContent?.trim()?.toUpperCase();
+  const data=ticker&&LATEST.companies?.[ticker];
+  if(!data||panel.querySelector(".ts-latest-verified"))continue;
+  const section=document.createElement("section");section.className="ts-latest-verified";
+  const head=document.createElement("div");head.className="ts-latest-header";
+  const label=document.createElement("strong");label.textContent="공식 최신 실적 · "+data.period+" · "+data.release;head.append(label);
+  const src=document.createElement("a");src.href=data.source;src.target="_blank";src.rel="noopener noreferrer";src.textContent="발표 원문 ↗";head.append(src);section.append(head);
+  const headline=document.createElement("div");headline.className="ts-latest-headline";headline.textContent=data.headline;section.append(headline);
+  const grid=document.createElement("div");grid.className="ts-latest-metrics";
+  for(const fact of data.facts||[]){
+   const cell=document.createElement("div");cell.className="ts-latest-fact";
+   const key=document.createElement("span");key.textContent=fact.label;
+   const value=document.createElement("b");value.textContent=fact.value;
+   const meta=document.createElement("small");meta.textContent=fact.tag;
+   cell.append(key,value,meta);grid.append(cell);
+  }
+  section.append(grid);
+  const note=document.createElement("p");note.className="ts-latest-disclaimer";note.textContent=data.note+
+   " · 기존 실적 카드의 과거 스냅샷과 별개. 숫자 클릭 시 최신 시계열 목록도 확인 가능.";
+  section.append(note);
+  const anchor=panel.querySelector(".earnings-date-audit")||panel.querySelector("h2");
+  if(anchor)anchor.after(section);else panel.prepend(section);
+ }
+}
 function init(root){
  const scope=root||document;
- if(loaded)buildHistoryLists(scope);
+ if(loaded){buildHistoryLists(scope);buildLatestPanels(scope);}
  scope.querySelectorAll(query).forEach(el=>{if(eligible(el)){el.classList.add("ts-clickable");el.setAttribute("tabindex","0");el.setAttribute("role","button");el.setAttribute("aria-label","시계열 그래프 보기: "+metricText(el));}});
 }
 function main(){
