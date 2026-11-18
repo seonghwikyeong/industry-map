@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/check_timeseries_ui.cjs'
+      - '.github/workflows/check-timeseries-ui.yml'
       - 'timeseries-ui.js'
       - 'money-flow-ui.js'
       - 'research-signals-ui.js'
