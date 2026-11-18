@@ -8,6 +8,12 @@ on:
       - 'scripts/check_timeseries_ui.cjs'
       - 'timeseries-ui.js'
       - 'money-flow-ui.js'
+      - 'research-signals-ui.js'
+      - 'scripts/check_research_signals.cjs'
+      - 'latest-financials-20261118.json'
+      - 'segment-data.js'
+      - 'product-taxonomy.js'
+      - 'financial-drilldowns.js'
       - 'money-flow-links.json'
       - 'scripts/check_money_flow.cjs'
       - 'company.html'
@@ -31,7 +37,10 @@ jobs:
         run: |
           node --check timeseries-ui.js
           node --check money-flow-ui.js
+          node --check research-signals-ui.js
       - name: Test click-to-chart interactions for 47 companies
         run: node scripts/check_timeseries_ui.cjs
       - name: Verify money flow matches all 47 companies and scenarios
         run: node scripts/check_money_flow.cjs
+      - name: Verify quantitative press and call research panels for 47 firms
+        run: node scripts/check_research_signals.cjs
