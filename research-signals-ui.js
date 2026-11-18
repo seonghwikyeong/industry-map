@@ -83,7 +83,7 @@ function build(root){
    top.append(n("strong","rs64-extracted",x.extracted),n("span","rs64-media",x.source||"기사"));
    item.append(top);
    item.append(textLink(x.title,x.url));
-   item.append(n("div","rs64-qualifier","뉴스 제목 인용 · 원문 검증 전 · 실제 매출·거래액과 혼합 금지"));
+   item.append(n("div","rs64-qualifier",x.source==="기업 공식 IR"?"기업이 발표한 공식 IR 실적 수치 · 발표 원문 연결":"뉴스 제목 인용 · 원문 검증 전 · 실제 매출·거래액과 혼합 금지"));
    const dt=new Date(x.published_at);
    item.append(n("div","rs64-date",isFinite(dt.getTime())?dt.toLocaleString("ko-KR",{timeZone:"Asia/Seoul"}):"날짜 미상"));
    container.append(item);
