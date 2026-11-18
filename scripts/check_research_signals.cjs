@@ -29,12 +29,21 @@ async function main(){
   const calls=block.querySelectorAll(".rs64-call");
   if(articles.length)withArticles++;
   numericArticles+=articles.length;callCount+=calls.length;
-  for(const a of articles){assert.ok(a.querySelector("a[href^='https://']"),"News provenance");assert.ok(a.textContent.includes("원문 검증 전"),"News headline must remain unverified");}
+  for(const a of articles){assert.ok(a.querySelector("a[href^='https://']"),"News provenance");assert.ok(a.querySelector(".rs64-qualifier"),"News or deployed product must retain explicit verification status");}
   for(const call of calls){assert.ok(call.querySelector("a[href^='https://']"),"Call source");}
  }
  assert.ok(callCount>=8);
  const nvidia=panels.find(p=>p.querySelector("h2 span").textContent.trim()==="NVDA");
  assert.ok(nvidia.querySelector(".rs64").textContent.includes("Rubin"));
+ for(const ticker of ["MSFT","GOOGL","ORCL","CRWV","NBIS"]){
+  const partner=panels.find(p=>p.querySelector("h2 span").textContent.trim()===ticker);
+  assert.ok(partner.querySelector(".rs64").textContent.includes("Vera Rubin NVL72"),ticker+" confirmed Rubin deployment missing");
+ }
+ const thirdParty=[...w.document.querySelectorAll(".rs64-article")].filter(e=>e.querySelector(".rs64-media")?.textContent!=="기업 공식 IR");
+ for(const item of thirdParty.filter(e=>e.querySelector(".rs64-media"))){
+  assert.ok(item.textContent.includes("원문 검증 전"),"Unverified third-party numeric headline must be marked");
+ }
+
  const imported=panels[0].cloneNode(true);imported.querySelector(".rs64")?.remove();
  const slot=w.document.createElement("div");slot.append(imported);w.document.body.append(slot);
  w.initResearchSignals(slot);
