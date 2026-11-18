@@ -1,4 +1,4 @@
-/* AI Industry Map V6.1 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
+/* AI Industry Map V6.4 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -613,7 +613,7 @@ async function load(force){
   }catch(error){console.warn("Five-year Taiwan MOPS cache unavailable",error)}
   // Official IR releases since the last company snapshots; preserve older 5-year points.
   try{
-   const ir=await fetch("./latest-financials-20261117.json?v=20261117",{cache:"no-store"});
+   const ir=await fetch("./latest-financials-20261118.json?v=20261118",{cache:"no-store"});
    if(ir.ok){
     const latest=await ir.json();LATEST=latest;
     for(const [ticker,record] of Object.entries(latest.companies||{})){
@@ -720,8 +720,8 @@ function buildLatestPanels(scope){
    const cell=document.createElement("div");cell.className="ts-latest-fact";
    const key=document.createElement("span");key.textContent=fact.label;
    const value=document.createElement("b");value.textContent=fact.value;
-   const metricByLabel={"매출":"revenue","GAAP EPS":"eps","영업이익률":"operatingMargin","영업현금흐름":"operatingCashFlow","매출총이익률":"grossMargin","영업이익":"operatingIncome","조정 EBITDA":"adjustedEbitda","Revenue Backlog":"revenueBacklog","계속사업 손실":"continuingOperationsIncome","조정 순이익":"adjustedNetIncome","순이익":"netIncome","DS 매출":"deviceSolutionsRevenue","DS 영업이익":"deviceSolutionsOperatingIncome","설치기반 매출":"installedBaseRevenue"};
-   if(metricByLabel[fact.label])value.dataset.tsKey=metricByLabel[fact.label];
+   const metricByLabel={"매출":"revenue","GAAP EPS":"eps","영업이익률":"operatingMargin","영업현금흐름":"operatingCashFlow","매출총이익률":"grossMargin","영업이익":"operatingIncome","조정 EBITDA":"adjustedEbitda","Revenue Backlog":"revenueBacklog","계속사업 손실":"continuingOperationsIncome","조정 순이익":"adjustedNetIncome","순이익":"netIncome","DS 매출":"deviceSolutionsRevenue","DS 영업이익":"deviceSolutionsOperatingIncome","설치기반 매출":"installedBaseRevenue","데이터센터 매출":"dataCenterRevenue","Hyperscale 매출":"hyperscaleRevenue","AI Cloud·기업 매출":"aicieRevenue","Compute·Networking":"computeNetworkingRevenue","Graphics":"graphicsRevenue","Rubin 플랫폼 매출":"rubinPlatformRevenue","공급 약정":"supplierCommitments"};
+   if(metricByLabel[fact.label]&&DB.companies?.[ticker]?.[metricByLabel[fact.label]]?.points?.length>=2)value.dataset.tsKey=metricByLabel[fact.label];
    const meta=document.createElement("small");meta.textContent=fact.tag;
    cell.append(key,value,meta);grid.append(cell);
   }
