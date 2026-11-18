@@ -9,6 +9,8 @@ on:
     branches: [main]
     paths:
       - "news-ui.js"
+      - "scripts/update_news.py"
+      - "latest-financials-20261118.json"
 
 permissions:
   contents: write
