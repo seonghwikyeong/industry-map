@@ -31,7 +31,7 @@ EXTRA = read("timeseries-v58.json")
 BOOT = read("timeseries-bootstrap5y.json")
 SEC = read("timeseries-sec5y.json")
 TWSE = read("timeseries-twse5y.json")
-LATEST = read("latest-financials-20261117.json")
+LATEST = read("latest-financials-20261118.json")
 NEWS = json.loads((ROOT/"news.json").read_text()) if (ROOT/"news.json").exists() else {}
 report = []
 for ticker in UNIVERSE:
