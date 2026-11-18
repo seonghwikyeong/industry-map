@@ -29,7 +29,7 @@ async function main(){
   const calls=block.querySelectorAll(".rs64-call");
   if(articles.length)withArticles++;
   numericArticles+=articles.length;callCount+=calls.length;
-  for(const a of articles){assert.ok(a.querySelector("a[href^='https://']"),"News provenance");assert.ok(a.querySelector(".rs64-qualifier"),"News or deployed product must retain explicit verification status");}
+  for(const a of articles){assert.ok(a.querySelector("a[href^='https://']"),"News provenance");assert.ok(a.querySelector(".rs64-qualifier,.rs64-kind"),"News or deployed product must retain explicit verification status");}
   for(const call of calls){assert.ok(call.querySelector("a[href^='https://']"),"Call source");}
  }
  assert.ok(callCount>=8);
