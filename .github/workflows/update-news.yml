@@ -11,6 +11,7 @@ on:
       - "news-ui.js"
       - "scripts/update_news.py"
       - "latest-financials-20261118.json"
+      - ".github/workflows/update-news.yml"
 
 permissions:
   contents: write
