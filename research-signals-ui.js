@@ -54,6 +54,25 @@ function build(root){
    detail.append(n("summary",null,"확인된 어닝콜·CFO 정량 발언 ("+call.length+"건)"));
    const grid=n("div","rs64-grid");call.forEach(p=>grid.append(highlight(ticker,p)));detail.append(grid);section.append(detail);
   }
+  // Confirmed product deployments are different from confirmed bilateral payments.
+  const deployments=financials.companies.NVDA?.officialDeployments||[];
+  const related=deployments.filter(x=>ticker==="NVDA"||x.ticker===ticker);
+  if(related.length){
+   const details=n("details","rs64-group");details.open=true;
+   details.append(n("summary",null,"공식 발표 제품 공급·가동 현황 ("+related.length+"건, 지불액 N/D)"));
+   const list=n("div","rs64-newslist");
+   for(const e of related){
+    const item=n("article","rs64-article");
+    const heading=n("div","rs64-articletop");
+    const label=ticker==="NVDA"?e.name+" · "+e.product:"NVIDIA · "+e.product;
+    heading.append(n("strong",null,label));item.append(heading);
+    item.append(n("div","rs64-kind",e.status+" · 직접 거래액 미공시"));
+    item.append(n("p","rs64-note",e.detail));
+    if(safeUrl(e.source))item.append(textLink("엔비디아 공식 실적 발표 원문 ↗",e.source));
+    list.append(item);
+   }
+   details.append(list);section.append(details);
+  }
   const news=n("details","rs64-group");news.open=articles.length>0;
   news.append(n("summary",null,"최근 기사 제목의 정량 단서 ("+articles.length+"건)"));
   const container=n("div","rs64-newslist");
