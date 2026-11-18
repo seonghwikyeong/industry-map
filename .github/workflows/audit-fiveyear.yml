@@ -5,9 +5,10 @@ on:
     branches: [main]
     paths:
       - 'scripts/check_fiveyear_coverage.py'
+      - '.github/workflows/audit-fiveyear.yml'
       - 'timeseries-sec5y.json'
       - 'timeseries-twse5y.json'
-      - 'latest-financials-20261117.json'
+      - 'latest-financials-20261118.json'
       - '.github/workflows/audit-fiveyear.yml'
 
 permissions:
