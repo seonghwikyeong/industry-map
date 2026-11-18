@@ -174,6 +174,40 @@ def main():
                 failures.append((ticker, str(exc)))
                 results[ticker] = previous.get(ticker, [])[:LIMIT]
                 print(f"WARNING {ticker}: {exc}")
+    # Pin source-verified recent official earnings into the headline feed,
+    # so official reports are not buried by social/media preview articles.
+    # These numbers come from individually checked earnings releases, not RSS guesses.
+    latest_path = ROOT / "latest-financials-20261118.json"
+    if latest_path.exists():
+        try:
+            releases = json.loads(latest_path.read_text(encoding="utf-8")).get("companies", {})
+            for ticker, record in releases.items():
+                if ticker not in QUERIES:
+                    continue
+                release = dt.date.fromisoformat(record["release"])
+                published = dt.datetime.combine(release, dt.time(20, 0), tzinfo=UTC)
+                if not (NOW - WINDOW <= published <= NOW + dt.timedelta(hours=1)):
+                    continue
+                url = record.get("source", "")
+                facts = record.get("facts", [])
+                metrics = " · ".join(f["label"] + " " + f["value"] for f in facts[:3])
+                title = ticker + " 공식 실적 " + record["period"] + " · " + metrics
+                item = {
+                    "id": hashlib.sha256(("verified-ir|" + ticker + "|" + record["period"]).encode()).hexdigest()[:18],
+                    "title": title[:240],
+                    "url": url,
+                    "source": "기업 공식 IR",
+                    "published_at": published.isoformat(timespec="seconds").replace("+00:00", "Z"),
+                    "category": "실적",
+                    "priority": 5,
+                }
+                if not url.startswith("https://"):
+                    continue
+                rest = [a for a in results.get(ticker, []) if a.get("id") != item["id"]]
+                results[ticker] = [item] + rest[:LIMIT-1]
+                print(f"PINNED official IR {ticker} {record['period']}", flush=True)
+        except (ValueError, OSError, KeyError, TypeError) as error:
+            print(f"WARNING official IR news seeding unavailable: {error}", flush=True)
     if len(failures) == len(QUERIES):
         raise SystemExit("All feeds failed. Keeping existing news.json unchanged.")
     payload = {
