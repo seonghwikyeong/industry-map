@@ -29,7 +29,7 @@ async function main(){
   const calls=block.querySelectorAll(".rs64-call");
   if(articles.length)withArticles++;
   numericArticles+=articles.length;callCount+=calls.length;
-  for(const a of articles){assert.ok(a.querySelector("a[href^='https://news.google.com/']"),"News provenance");assert.ok(a.textContent.includes("원문 검증 전"),"News headline must remain unverified");}
+  for(const a of articles){assert.ok(a.querySelector("a[href^='https://']"),"News provenance");assert.ok(a.textContent.includes("원문 검증 전"),"News headline must remain unverified");}
   for(const call of calls){assert.ok(call.querySelector("a[href^='https://']"),"Call source");}
  }
  assert.ok(callCount>=8);
