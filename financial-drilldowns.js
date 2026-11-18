@@ -11,9 +11,12 @@ function productTree(ticker,group,segmentRevenue){
   const match=entry?.groups?.find(a=>a[0]===group)||(ticker==="NVDA"&&group.startsWith("Non-Data Center")?entry.groups.find(a=>a[0].startsWith("Edge Computing")):null);
   if(!match)return "";
   return '<div class="product-tree"><div class="product-tree-title">핵심 제품·서비스 및 발표된 로드맵 (개별 매출 미공시 N/D)</div>'+match[1].map(([name,description,amount])=>{
-    const known=typeof amount==="number";
-    const pct=known&&segmentRevenue>0?" · "+(amount/segmentRevenue*100).toFixed(1)+"% of segment":"";
-    return '<div class="product-item"><div class="product-head"><b>'+esc(name)+'</b><span class="'+(known?"product-amount":"product-unknown")+'">'+(known?"$"+fmt(amount)+"M"+pct:"매출 N/D")+'</span></div><p>'+esc(description)+'</p></div>';
+    const number=typeof amount==="number"?amount:(amount&&Number.isFinite(amount.value)?amount.value:null);
+    const known=number!==null;
+    const pct=known&&segmentRevenue>0?" · "+(number/segmentRevenue*100).toFixed(1)+"% of segment":"";
+    const display=known?(typeof amount==="object"&&amount.display?esc(amount.display):"$"+fmt(number)+"M"+pct):"매출 N/D";
+    const source=known&&typeof amount==="object"&&typeof amount.source==="string"&&amount.source.startsWith("https://")?'<a class="drill-source" href="'+esc(amount.source)+'" target="_blank" rel="noopener noreferrer">발언·CFO 수치 원문 ↗</a>':"";
+    return '<div class="product-item"><div class="product-head"><b>'+esc(name)+'</b><span class="'+(known?"product-amount":"product-unknown")+'">'+display+'</span></div><p>'+esc(description)+'</p>'+source+'</div>';
   }).join("")+(entry.source?'<a class="drill-source" href="'+esc(entry.source)+'" target="_blank" rel="noopener noreferrer">제품 포트폴리오 공식 자료 ↗</a>':'')+'</div>';
 }
 function allProductTrees(ticker){
