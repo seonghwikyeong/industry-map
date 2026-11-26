@@ -1,4 +1,4 @@
-/* AI Industry Map V6.4 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
+/* AI Industry Map V6.6 · five-year SEC rolling history + source-backed segments; extended source-backed company financial time-series charts.
    Click an existing numeric metric; never invent missing quarters.
    Works on both the map and company.html imported panels using event delegation.
 */
@@ -613,7 +613,7 @@ async function load(force){
   }catch(error){console.warn("Five-year Taiwan MOPS cache unavailable",error)}
   // Official IR releases since the last company snapshots; preserve older 5-year points.
   try{
-   const ir=await fetch("./latest-financials-20261118.json?v=20261118",{cache:"no-store"});
+   const ir=await fetch("./latest-financials-20261126.json?v=20261126",{cache:"no-store"});
    if(ir.ok){
     const latest=await ir.json();LATEST=latest;
     for(const [ticker,record] of Object.entries(latest.companies||{})){
