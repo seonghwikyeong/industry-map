@@ -1,4 +1,4 @@
-/* AI Industry Map V6.4: source-attributed quantitative press and call signals.
+/* AI Industry Map V6.6: source-attributed quantitative press and call signals.
    A media headline is a lead to inspect, NOT a verified company metric.
    Company IR/CFO/call figures remain separated from market-wide estimates and future commitments.
 */
@@ -125,7 +125,7 @@ async function load(){
  loading=(async()=>{
   try{
    const [r1,r2]=await Promise.all([
-    fetch("./latest-financials-20261118.json?v=64",{cache:"no-store"}),
+    fetch("./latest-financials-20261126.json?v=20261126",{cache:"no-store"}),
     fetch("./news.json?v="+Math.floor(Date.now()/3600000),{cache:"no-store"})
    ]);
    if(!r1.ok||!r2.ok)throw Error("Missing financial or news data");
